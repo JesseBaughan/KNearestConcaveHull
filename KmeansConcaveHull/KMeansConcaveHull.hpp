@@ -34,25 +34,25 @@ namespace
 
         ~KmeansConcaveHull();
 
-        std::vector<std::vector<float>> calculate(std::vector<std::vector<float>> points, uint32_t k = 0);
+        std::vector<std::vector<float>> calculate(const std::vector<std::vector<float>>& points, uint32_t k = 0);
 
     private:
         uint32_t getNextK();
 
         float havesineDistance(lat_lon_coord first, lat_lon_coord second);
 
-        lat_lon_coord getLowestLatitudeIndex(std::vector<lat_lon_coord>& points);
+        lat_lon_coord getLowestLatitudeIndex(const std::vector<lat_lon_coord>& points);
 
         std::vector<lat_lon_coord> getKNearest(uint32_t currentPointIndex, uint32_t k);
 
         std::vector<float> calculateHeadings(lat_lon_coord currentPointIndex, 
-                                             std::vector<lat_lon_coord> searchPoints, 
+                                             const std::vector<lat_lon_coord>& searchPoints, 
                                              float ref_heading=0.0f);
 
-        bool containedCheck(std::vector<lat_lon_coord> hull, lat_lon_coord point);
+        bool containedCheck(const std::vector<lat_lon_coord>& hull, lat_lon_coord point);
 
         // TODO: refacto to NOT use recursion - it is not efficient.
-        void recurse_calculate(std::vector<lat_lon_coord> points, uint32_t k = 3);
+        void recurse_calculate(const std::vector<lat_lon_coord>& points, uint32_t k = 3);
 
     };
 }
