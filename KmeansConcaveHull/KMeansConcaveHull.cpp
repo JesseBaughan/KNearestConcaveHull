@@ -40,3 +40,14 @@ float KmeansConcaveHull::havesineDistance(lat_lon_coord first, lat_lon_coord sec
     return d;
 }
 
+float KmeansConcaveHull::getNextK()
+{
+    if (prime_ix < prime_k.size())
+    {
+        return prime_k[prime_ix];
+    }
+    else
+    {
+        return -1.0f;
+    }
+}
