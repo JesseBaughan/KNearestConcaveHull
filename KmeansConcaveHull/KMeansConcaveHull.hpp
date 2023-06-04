@@ -31,7 +31,10 @@ namespace
     class KmeansConcaveHull
     {
     public:
-        KmeansConcaveHull();
+        KmeansConcaveHull(const std::vector<float>& lat, const std::vector<float>& lon)
+        {
+            //Initialise dataset with lat/lons
+        }
 
         ~KmeansConcaveHull();
 
@@ -41,6 +44,10 @@ namespace
         static constexpr std::array<float, 18> prime_k = {3,  7, 13, 19, 29, 37,
                                                           43, 53, 61, 71, 79, 89,
                                                           97, 101, 107, 113, 131, 139};
+        
+        std::vector<lat_lon_coord> dataSet;
+        std::vector<bool> indices;
+
         uint32_t prime_ix{0};
 
         float havesineDistance(lat_lon_coord first, lat_lon_coord second);

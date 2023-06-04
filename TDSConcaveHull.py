@@ -75,7 +75,6 @@ class TDSConcaveHull():
     @staticmethod
     def get_lowest_latitude_index(points):
         return np.argsort(points[:, 1])[0]
-    
 
     """
     @fn get_k_nearest
