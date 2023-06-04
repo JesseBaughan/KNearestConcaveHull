@@ -38,6 +38,9 @@ namespace
 
         ~KmeansConcaveHull();
 
+        KmeansConcaveHull(const KmeansConcaveHull&) = delete;
+        KmeansConcaveHull& operator = (const KmeansConcaveHull&) = delete;
+
         std::vector<std::vector<float>> calculate(const std::vector<std::vector<float>>& points, uint32_t k = 0);
 
     private:
