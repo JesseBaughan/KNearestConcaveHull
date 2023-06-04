@@ -39,7 +39,7 @@ def generate_random_cluster():
     point_deviation_y = 5
 
     number_of_clusters = 1
-    points_per_cluster = 50
+    points_per_cluster = 100
 
     cluster_centers = [generate_point(cluster_mean_x,
                                     cluster_mean_y,
