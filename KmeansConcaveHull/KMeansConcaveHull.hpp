@@ -16,7 +16,7 @@
 #include <vector>
 #include <array>
 
-namespace
+namespace Clustering
 {
     struct lat_lon_coord
     {
@@ -32,33 +32,35 @@ namespace
     {
     public:
         KmeansConcaveHull(const std::vector<float>& lat, const std::vector<float>& lon)
+            : _lat(lat)
+            , _lon(lon)
+            , _indices(_lat.size(), true)
         {
-            //Initialise dataset with lat/lons
-
         }
 
-        ~KmeansConcaveHull();
+        ~KmeansConcaveHull() {};
 
         KmeansConcaveHull(const KmeansConcaveHull&) = delete;
         KmeansConcaveHull& operator = (const KmeansConcaveHull&) = delete;
 
         std::vector<std::vector<float>> calculate(const std::vector<std::vector<float>>& points, uint32_t k = 0);
+        uint32_t getLowestLatitudeIndex();
+
+        std::vector<bool> get_indices()    const { return _indices; }
 
     private:
-        static constexpr std::array<float, 18> prime_k = {3,  7, 13, 19, 29, 37,
-                                                          43, 53, 61, 71, 79, 89,
-                                                          97, 101, 107, 113, 131, 139};
+        const std::array<float, 18> prime_k = {3,  7, 13, 19, 29, 37,
+                                               43, 53, 61, 71, 79, 89,
+                                               97, 101, 107, 113, 131, 139};
         std::vector<float> _lat;
         std::vector<float> _lon;
-        std::vector<bool> indices;
+        std::vector<bool> _indices;
 
         uint32_t prime_ix{0};
 
         float havesineDistance(lat_lon_coord first, lat_lon_coord second);
 
-        uint32_t getLowestLatitudeIndex(const std::vector<lat_lon_coord>& points);
-
-        std::vector<lat_lon_coord> getKNearest(uint32_t currentPointIndex, uint32_t k);
+        std::vector<bool> getKNearest(uint32_t currentPointIndex, uint32_t k);
 
         float getNextK();
 

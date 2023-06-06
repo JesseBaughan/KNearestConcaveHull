@@ -63,7 +63,6 @@ def main():
     #        [0.5, 0.25], [0.5, 0.75], [0.25, 0.5], [0.75, 0.5]]
 
     # Create a test cluster
-    '''
     points_2d = [[-27.4507974, 153.0476219],
                 [-27.451273651267112, 153.04687382688317], 
                 [-27.45169316203486, 153.0476602627239], 
@@ -73,10 +72,10 @@ def main():
                 [-27.450159439942457, 153.04581245818747], 
                 [-27.44996617171483, 153.04982136283908]]
 
-    lat_lon_coords = np.array(list(zip(*points_2d)))
-    '''
+    points_2d = np.array(points_2d)
+    #points_2d = np.array(list(zip(*points_2d)))
 
-    n_samples = 1000
+    n_samples = 1
     failed_counter = 0
     tds_concave_hull = TDSConcaveHull() 
 
@@ -84,7 +83,7 @@ def main():
     profiler.enable()
 
     for i in range(n_samples):
-        points_2d = np.array(generate_random_cluster())
+        #points_2d = np.array(generate_random_cluster())
 
         boundary = tds_concave_hull.calculate(points_2d)
 
@@ -100,7 +99,7 @@ def main():
 
     profiler.disable()
     stats = pstats.Stats(profiler).sort_stats('cumtime')
-    stats.print_stats()
+    #stats.print_stats()
 
 if __name__ == "__main__":
     main()

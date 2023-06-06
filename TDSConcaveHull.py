@@ -88,6 +88,8 @@ class TDSConcaveHull():
         ixs = self.indices
 
         base_indices = np.arange(len(ixs))[ixs]
+        print("BASE INDICES: ", base_indices)
+
         distances = self.haversine_distance(self.data_set[ix, :], self.data_set[ixs, :])
         sorted_indices = np.argsort(distances)
 
@@ -151,6 +153,8 @@ class TDSConcaveHull():
        
         self.indices = np.ones(self.data_set.shape[0], dtype=bool)
 
+        print(self.indices)
+
         try:
             if self.data_set.shape[0] <= 3:
                 print("Skipped hull calc <= 3 points")
@@ -160,6 +164,7 @@ class TDSConcaveHull():
             k_check = min(k, self.data_set.shape[0]) 
 
             first_point = self.get_lowest_latitude_index(self.data_set)
+            print("FIRST POINT: ", first_point)
             current_point = first_point
             
             hull = np.reshape(np.array(self.data_set[first_point, :]), (1, 2))
