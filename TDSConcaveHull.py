@@ -87,14 +87,17 @@ class TDSConcaveHull():
     def get_k_nearest(self, ix, k):
         ixs = self.indices
 
-        base_indices = np.arange(len(ixs))[ixs]
-        print("BASE INDICES: ", base_indices)
+        arang = np.arange(len(ixs))
+        base_indices = arang[ixs]
 
         distances = self.haversine_distance(self.data_set[ix, :], self.data_set[ixs, :])
         sorted_indices = np.argsort(distances)
+        print("DISTANCES: ", distances)
+        print("ARGSORTED: ", sorted_indices)
 
         k_check = min(k, len(sorted_indices))
         k_nearest = sorted_indices[range(k_check)]
+        print("KNEAREST: ", k_nearest)
         return base_indices[k_nearest]
     
     """

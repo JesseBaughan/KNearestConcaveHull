@@ -52,13 +52,15 @@ namespace Clustering
         const std::array<float, 18> prime_k = {3,  7, 13, 19, 29, 37,
                                                43, 53, 61, 71, 79, 89,
                                                97, 101, 107, 113, 131, 139};
+        std::vector<lat_lon_coord> _data_set;
         std::vector<float> _lat;
         std::vector<float> _lon;
         std::vector<bool> _indices;
 
         uint32_t prime_ix{0};
 
-        float havesineDistance(lat_lon_coord first, lat_lon_coord second);
+        std::vector<float> calculateDistances(lat_lon_coord currentPoint, const std::vector<lat_lon_coord>& kNearestPoints);
+        float haversineDistance(lat_lon_coord first, lat_lon_coord second);
 
         std::vector<bool> getKNearest(uint32_t currentPointIndex, uint32_t k);
 
@@ -72,6 +74,9 @@ namespace Clustering
 
         // TODO: refacto to NOT use recursion - it is not efficient.
         void recurseCalculate(const std::vector<lat_lon_coord>& points, uint32_t k = 3);
+
+        template<typename Type>
+        std::vector<Type> KmeansConcaveHull::getMaskedArray(const std::vector<Type>& input_array, std::vector<bool>& mask);
 
     };
 }

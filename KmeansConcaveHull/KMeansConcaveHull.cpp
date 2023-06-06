@@ -12,15 +12,20 @@
 #include <math.h>
 #include <cmath>
 #include <algorithm>
+#include <numeric>
 
 #include "KMeansConcaveHull.hpp"
 
 namespace Clustering
 {
-    // convert our passed value to radians_t
-    inline float convert(const float angle) 
+    static inline float radians(float degrees)
     {
-        return angle * (M_PI / 180);
+        return (degrees * M_PI)  / 180.0f;
+    }
+
+    static inline float degrees(float radians)
+    {
+        return radians * (180.0 / M_PI);
     }
 
     std::vector<std::vector<float>> KmeansConcaveHull::calculate(const std::vector<std::vector<float>> &points, uint32_t k)
@@ -104,16 +109,16 @@ namespace Clustering
         */
     }
 
-    float KmeansConcaveHull::havesineDistance(lat_lon_coord first, lat_lon_coord second)
+    float KmeansConcaveHull::haversineDistance(const lat_lon_coord first, const lat_lon_coord second)
     {
         const float earths_radius = 6371;
 
-        // Get the difference between our two points then convert the difference into radians
-        const float lat_delta = convert(second.Lat - first.Lat);
-        const float lon_delta = convert(second.Lon - first.Lon);
+        // Get the difference between our two points then radians the difference into radians
+        const float lat_delta = radians(second.Lat - first.Lat);
+        const float lon_delta = radians(second.Lon - first.Lon);
 
-        const float converted_lat1 = convert(first.Lat);
-        const float converted_lat2 = convert(second.Lat);
+        const float converted_lat1 = radians(first.Lat);
+        const float converted_lat2 = radians(second.Lat);
 
         const float a =
             pow(sin(lat_delta / 2), 2) + cos(converted_lat1) * cos(converted_lat2) * pow(sin(lon_delta / 2), 2);
@@ -124,6 +129,18 @@ namespace Clustering
         return d;
     }
 
+    std::vector<float> KmeansConcaveHull::calculateDistances(lat_lon_coord currentPoint, const std::vector<lat_lon_coord>& kNearestPoints)
+    {
+        std::vector<float> distances;
+        distances.reserve(kNearestPoints.size());
+        for(int i = 0; i < kNearestPoints.size(); i++)
+        {
+           distances.push_back(haversineDistance(currentPoint, kNearestPoints[i]));
+        }
+
+        return distances;
+    }
+
     uint32_t KmeansConcaveHull::getLowestLatitudeIndex()
     {
         std::vector<float> temp_lats = _lat;
@@ -132,20 +149,46 @@ namespace Clustering
         return index;
     }
 
+    template<typename Type>
+    std::vector<Type> KmeansConcaveHull::getMaskedArray(const std::vector<Type>& input_array, std::vector<bool>& mask)
+    {
+        std::vector<Type> masked_array;
+        masked_array.reserve(input_array.size());
+
+        for(int i = 0; i < array.size(); i++)
+        {
+            if(mask[i] == true)
+            {
+                masked_array.push_back(increasing_vals[i]);
+            }
+        }
+
+        return masked_array;
+    }
+
     std::vector<bool> KmeansConcaveHull::getKNearest(uint32_t currentPointIndex, uint32_t k)
     {
-        /*
         std::vector<bool> ixs = _indices;
+        std::vector<uint32_t> increasing_vals(ixs.size(), 0);
+        std::iota(increasing_vals.begin(), increasing_vals.end(), 0);
 
-        std::vector<bool> base_indices = np.arange(len(ixs))[ixs];
-        distances = self.haversine_distance(self.data_set[ix, :], self.data_set[ixs, :])
+        std::vector<uint32_t> base_indices = getMaskedArray(increasing_vals, ixs);
+
+        std::vector<lat_lon_coord> masked_data_set;
+        masked_data_set.reserve(base_indices.size());
+        for(int i = 0; i < base_indices.size(); i++)
+        {
+            masked_data_set[i] = _data_set[base_indices[i]];
+        }
+
+        std::vector<float> distances = calculateDistances(masked_data_set[currentPointIndex], masked_data_set);
+
         sorted_indices = np.argsort(distances)
 
         k_check = min(k, len(sorted_indices))
         k_nearest = sorted_indices[range(k_check)]
         return base_indices[k_nearest]
-        */
-    return std::vector<bool>(3, true);
+        return std::vector<bool>(3, true);
     }
 
     float KmeansConcaveHull::getNextK()
@@ -158,16 +201,6 @@ namespace Clustering
         {
             return -1.0f;
         }
-    }
-
-    static constexpr float radians(float degrees)
-    {
-        return (degrees * M_PI)  / 180.0f;
-    }
-
-    static constexpr float degrees(float radians)
-    {
-        return radians * (180.0 / M_PI);
     }
 
     std::vector<float> calculateHeadings(lat_lon_coord currentPointIndex, 
