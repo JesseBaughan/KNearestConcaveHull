@@ -11,6 +11,7 @@
  
 #include <math.h>
 #include <cmath>
+#include <algorithm>
 
 #include "KMeansConcaveHull.hpp"
 
@@ -121,11 +122,12 @@ float KmeansConcaveHull::havesineDistance(lat_lon_coord first, lat_lon_coord sec
     return d;
 }
 
-lat_lon_coord KmeansConcaveHull::getLowestLatitudeIndex(const std::vector<lat_lon_coord> &points)
+uint32_t KmeansConcaveHull::getLowestLatitudeIndex(const std::vector<lat_lon_coord> &points)
 {
-    // Search array of points we are trying to 
-    // calcualte a concave hull on for lowest lat point
-    // TODO: What search algorithm do we use here?
+    std::vector<float> temp_lats = _lat;
+    std::vector<float>::iterator it = std::min_element(std::begin(temp_lats), std::end(temp_lats));
+    uint32_t index = std::distance(std::begin(temp_lats), it);
+    return index;
 }
 
 std::vector<lat_lon_coord> KmeansConcaveHull::getKNearest(uint32_t currentPointIndex, uint32_t k)
