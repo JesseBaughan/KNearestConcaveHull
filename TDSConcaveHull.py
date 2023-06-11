@@ -85,6 +85,9 @@ class TDSConcaveHull():
     @param k The amount of neighbours to search around
     """
     def get_k_nearest(self, ix, k):
+        print("CURRENT POINT INDEX", ix)
+        print("K: ", k)
+
         ixs = self.indices
 
         arang = np.arange(len(ixs))
@@ -184,6 +187,7 @@ class TDSConcaveHull():
                     self.indices[first_point] = True
                 
                 knn = self.get_k_nearest(current_point, k_check)
+                print("KNEAREST: ", knn)
 
                 angles = self.calculate_headings(current_point, knn, prev_angle)
 

@@ -1,0 +1,38 @@
+#include "gtest/gtest.h"
+#include "../KMeansConcaveHull/KMeansConcaveHull.hpp"
+
+std::vector<float> lon = {-27.4507974, -27.451273651267112, -27.45169316203486, 
+                            -27.451034639346872, -27.452475086130043, -27.452644945552006, 
+                            -27.450159439942457, -27.44996617171483};
+
+std::vector<float> lat = {153.0476219, 153.04687382688317, 153.0476602627239, 
+                            153.04883032580403, 153.05000678267146, 153.04604902831844, 
+                            153.04581245818747, 153.04982136283908};
+
+//#define DEBUG
+
+TEST(testLowestLatIndex, test1) {
+
+    Clustering::KmeansConcaveHull hull_calculator(lat, lon);
+    const std::vector<bool> indices = hull_calculator.get_mask();
+
+#ifdef DEBUG
+    for(int i = 0; i < indices.size(); i++)
+    {
+        std::cout << indices[i] << std::endl;
+    }
+#endif
+
+    uint32_t lowest_lat_index = hull_calculator.getLowestLatitudeIndex();
+
+#ifdef DEBUG
+    std::cout << "lowest lat index: " << lowest_lat_index << std::endl;
+#endif
+
+    EXPECT_EQ (lowest_lat_index,  6);
+}
+
+TEST(testKNearest, test2)
+{
+
+}
