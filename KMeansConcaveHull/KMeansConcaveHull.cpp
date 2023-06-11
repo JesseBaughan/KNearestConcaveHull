@@ -8,6 +8,8 @@
  * @par 
  *
  */
+
+#include <iostream>
  
 #include <math.h>
 #include <cmath>
@@ -189,9 +191,19 @@ namespace Clustering
     {
         std::vector<uint32_t> base_indices = getMaskedIndices(range(_mask.size()), _mask);
         std::vector<lat_lon_coord> masked_data_set = arraySubset(_data_set, base_indices);
-
+        for(auto& coord: masked_data_set)
+        {
+            std::cout << coord.Lat << ", " << coord.Lon << std::endl;
+        }
         //We need to calculate the distances array from the point to all other points
+        //std::cout << masked_data_set[currentPointIndex].Lat << ", " << masked_data_set[currentPointIndex].Lon << std::endl;
+
         std::vector<float> distances = calculateDistances(masked_data_set[currentPointIndex], masked_data_set);
+
+        for(auto& distance: distances)
+        {
+            std::cout << distance << std::endl;
+        }
 
         //Sort the distances array in non-decending order
         std::vector<uint32_t> sorted_indices = argsort(distances);
