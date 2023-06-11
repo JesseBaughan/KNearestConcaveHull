@@ -28,6 +28,18 @@ namespace Clustering
         return radians * (180.0 / M_PI);
     }
 
+    KmeansConcaveHull::KmeansConcaveHull(const std::vector<float>& lat, const std::vector<float>& lon)
+        : _lat(lat)
+        , _lon(lon)
+        , _mask(_lat.size(), true)
+    {
+        _data_set.reserve(lat.size());
+        for(int i = 0; i < lat.size(); i++)
+        {
+            _data_set[i] = lat_lon_coord(lat[i], lon[i]);
+        }
+    }
+
     std::vector<std::vector<float>> KmeansConcaveHull::calculate(const std::vector<std::vector<float>> &points, size_t k)
     {
         /*
@@ -173,7 +185,7 @@ namespace Clustering
         return output_array;
     }
 
-    std::vector<bool> KmeansConcaveHull::getKNearest(uint32_t currentPointIndex, size_t k)
+    std::vector<uint32_t> KmeansConcaveHull::getKNearest(uint32_t currentPointIndex, size_t k)
     {
         std::vector<uint32_t> base_indices = getMaskedIndices(range(_mask.size()), _mask);
         std::vector<lat_lon_coord> masked_data_set = arraySubset(_data_set, base_indices);
@@ -189,7 +201,7 @@ namespace Clustering
         sorted_indices.resize(k_check);
 
         //Set the index of the lowest K points to True, rest are false
-        std::vector<bool> kNearest = arraySubset<uint32_t, bool>(base_indices, sorted_indices);
+        std::vector<uint32_t> kNearest = arraySubset(base_indices, sorted_indices);
         
         return kNearest;
     }

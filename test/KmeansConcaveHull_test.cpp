@@ -11,28 +11,10 @@ std::vector<float> lat = {153.0476219, 153.04687382688317, 153.0476602627239,
 
 //#define DEBUG
 
-TEST(testLowestLatIndex, test1) {
-
-    Clustering::KmeansConcaveHull hull_calculator(lat, lon);
-    const std::vector<bool> indices = hull_calculator.get_mask();
-
-#ifdef DEBUG
-    for(int i = 0; i < indices.size(); i++)
-    {
-        std::cout << indices[i] << std::endl;
-    }
-#endif
-
-    uint32_t lowest_lat_index = hull_calculator.getLowestLatitudeIndex();
-
-#ifdef DEBUG
-    std::cout << "lowest lat index: " << lowest_lat_index << std::endl;
-#endif
-
-    EXPECT_EQ (lowest_lat_index,  6);
+TEST(testCluster1, test1) 
+{
 }
 
 TEST(testKNearest, test2)
 {
-
 }

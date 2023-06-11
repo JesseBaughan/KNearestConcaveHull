@@ -35,23 +35,18 @@ namespace Clustering
     class KmeansConcaveHull
     {
     public:
-        KmeansConcaveHull(const std::vector<float>& lat, const std::vector<float>& lon)
-            : _lat(lat)
-            , _lon(lon)
-            , _mask(_lat.size(), true)
-        {
-            //Initialise the dataset
-        }
-
+        KmeansConcaveHull(const std::vector<float>& lat, const std::vector<float>& lon);
         ~KmeansConcaveHull() {};
 
         KmeansConcaveHull(const KmeansConcaveHull&) = delete;
         KmeansConcaveHull& operator = (const KmeansConcaveHull&) = delete;
 
         std::vector<std::vector<float>> calculate(const std::vector<std::vector<float>>& points, size_t k = 0);
-        uint32_t getLowestLatitudeIndex();
 
+        // These are temporarily public whilst we perform testing
         std::vector<bool> get_mask()    const { return _mask; }
+        uint32_t getLowestLatitudeIndex();
+        std::vector<uint32_t> getKNearest(uint32_t currentPointIndex, size_t k = 3);
 
     private:
         const std::array<float, 18> _prime_k = {3,  7, 13, 19, 29, 37,
@@ -69,8 +64,6 @@ namespace Clustering
                                               const std::vector<lat_lon_coord>& kNearestPoints);
 
         float haversineDistance(lat_lon_coord first, lat_lon_coord second);
-
-        std::vector<bool> getKNearest(uint32_t currentPointIndex, size_t k = 3);
 
         float getNextK();
 
