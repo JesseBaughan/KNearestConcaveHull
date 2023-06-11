@@ -14,7 +14,7 @@ int main()
 
     Clustering::KmeansConcaveHull hull_calculator(lat, lon);
 
-    const std::vector<bool> indices = hull_calculator.get_indices();
+    const std::vector<bool> indices = hull_calculator.get_mask();
     for(int i = 0; i < indices.size(); i++)
     {
         std::cout << indices[i] << std::endl;

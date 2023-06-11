@@ -28,7 +28,7 @@ namespace Clustering
         return radians * (180.0 / M_PI);
     }
 
-    std::vector<std::vector<float>> KmeansConcaveHull::calculate(const std::vector<std::vector<float>> &points, uint32_t k)
+    std::vector<std::vector<float>> KmeansConcaveHull::calculate(const std::vector<std::vector<float>> &points, size_t k)
     {
         /*
         if isinstance(points, np.core.ndarray):
@@ -149,53 +149,88 @@ namespace Clustering
         return index;
     }
 
-    template<typename Type>
-    std::vector<Type> KmeansConcaveHull::getMaskedArray(const std::vector<Type>& input_array, std::vector<bool>& mask)
+    std::vector<uint32_t> KmeansConcaveHull::getMaskedIndices(const std::vector<uint32_t>& input_array, const std::vector<bool>& mask)
     {
-        std::vector<Type> masked_array;
+        std::vector<uint32_t> masked_array;
         masked_array.reserve(input_array.size());
 
-        for(int i = 0; i < array.size(); i++)
+        for(int i = 0; i < input_array.size(); i++)
         {
             if(mask[i] == true)
             {
-                masked_array.push_back(increasing_vals[i]);
+                masked_array.push_back(input_array[i]);
             }
         }
 
         return masked_array;
     }
 
-    std::vector<bool> KmeansConcaveHull::getKNearest(uint32_t currentPointIndex, uint32_t k)
+    // Returns a range from 0 to size
+    std::vector<uint32_t> range(size_t size)
     {
-        std::vector<bool> ixs = _indices;
-        std::vector<uint32_t> increasing_vals(ixs.size(), 0);
-        std::iota(increasing_vals.begin(), increasing_vals.end(), 0);
+        std::vector<uint32_t> output_array(size, 0);
+        std::iota(output_array.begin(), output_array.end(), 0);
+        return output_array;
+    }
 
-        std::vector<uint32_t> base_indices = getMaskedArray(increasing_vals, ixs);
+    std::vector<bool> KmeansConcaveHull::getKNearest(uint32_t currentPointIndex, size_t k)
+    {
+        std::vector<uint32_t> base_indices = getMaskedIndices(range(_mask.size()), _mask);
+        std::vector<lat_lon_coord> masked_data_set = arraySubset(_data_set, base_indices);
 
-        std::vector<lat_lon_coord> masked_data_set;
-        masked_data_set.reserve(base_indices.size());
-        for(int i = 0; i < base_indices.size(); i++)
-        {
-            masked_data_set[i] = _data_set[base_indices[i]];
-        }
-
+        //We need to calculate the distances array from the point to all other points
         std::vector<float> distances = calculateDistances(masked_data_set[currentPointIndex], masked_data_set);
 
-        sorted_indices = np.argsort(distances)
+        //Sort the distances array in non-decending order
+        std::vector<uint32_t> sorted_indices = argsort(distances);
 
-        k_check = min(k, len(sorted_indices))
-        k_nearest = sorted_indices[range(k_check)]
-        return base_indices[k_nearest]
-        return std::vector<bool>(3, true);
+        //Get the index of the lowest K points
+        size_t k_check = std::min(_k, sorted_indices.size());
+        sorted_indices.resize(k_check);
+
+        //Set the index of the lowest K points to True, rest are false
+        std::vector<bool> kNearest = arraySubset<uint32_t, bool>(base_indices, sorted_indices);
+        
+        return kNearest;
+    }
+
+    template<typename T, typename K>
+    std::vector<K> KmeansConcaveHull::arraySubset(const std::vector<T>& input_array, const std::vector<uint32_t>& indexes)
+    {
+        std::vector<K> output_array(indexes.size());
+
+        for(int i = 0; i < indexes.size(); i++)
+        {
+            output_array[i] = input_array[indexes[i]];
+        }
+
+        return output_array;
+    }
+
+    /**
+     * Argsort(currently support ascending sort)
+     * @tparam T array element type
+     * @param array input array
+     * @return indices w.r.t sorted array
+     */
+    template<typename T>
+    std::vector<uint32_t> KmeansConcaveHull::argsort(const std::vector<T> &array) {
+        std::vector<uint32_t> indices(array.size());
+        std::iota(indices.begin(), indices.end(), 0);
+        std::sort(indices.begin(), indices.end(),
+                [&array](int left, int right) -> bool {
+                    // sort indices according to corresponding array element
+                    return array[left] < array[right];
+                });
+
+        return indices;
     }
 
     float KmeansConcaveHull::getNextK()
     {
-        if (prime_ix < prime_k.size())
+        if (_prime_ix < _prime_k.size())
         {
-            return prime_k[prime_ix];
+            return _prime_k[_prime_ix];
         }
         else
         {
@@ -205,7 +240,7 @@ namespace Clustering
 
     std::vector<float> calculateHeadings(lat_lon_coord currentPointIndex, 
                                         const std::vector<lat_lon_coord>& searchPoints, 
-                                        float ref_heading=0.0f)
+                                        float ref_heading = 0.0f)
     {
         /*
         if ((ref_heading < 0.0f) || (ref_heading >= 360.0f))
@@ -228,7 +263,7 @@ namespace Clustering
         bearings[bearings < 0.0] += 360.0;
         return bearings
         */
-    return std::vector<float>(3, 1.0f);
+        return std::vector<float>(3, 1.0f);
     }
 
     bool containedCheck(const std::vector<lat_lon_coord>& hull, lat_lon_coord point)

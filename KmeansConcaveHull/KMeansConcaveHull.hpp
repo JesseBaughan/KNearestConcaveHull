@@ -26,6 +26,10 @@ namespace Clustering
         lat_lon_coord(float lat, float lon)
             : Lat(lat)
             , Lon(lon) {}
+        
+        lat_lon_coord()
+        : Lat(0)
+        , Lon(0) {}
     };
 
     class KmeansConcaveHull
@@ -34,8 +38,9 @@ namespace Clustering
         KmeansConcaveHull(const std::vector<float>& lat, const std::vector<float>& lon)
             : _lat(lat)
             , _lon(lon)
-            , _indices(_lat.size(), true)
+            , _mask(_lat.size(), true)
         {
+            //Initialise the dataset
         }
 
         ~KmeansConcaveHull() {};
@@ -43,26 +48,29 @@ namespace Clustering
         KmeansConcaveHull(const KmeansConcaveHull&) = delete;
         KmeansConcaveHull& operator = (const KmeansConcaveHull&) = delete;
 
-        std::vector<std::vector<float>> calculate(const std::vector<std::vector<float>>& points, uint32_t k = 0);
+        std::vector<std::vector<float>> calculate(const std::vector<std::vector<float>>& points, size_t k = 0);
         uint32_t getLowestLatitudeIndex();
 
-        std::vector<bool> get_indices()    const { return _indices; }
+        std::vector<bool> get_mask()    const { return _mask; }
 
     private:
-        const std::array<float, 18> prime_k = {3,  7, 13, 19, 29, 37,
+        const std::array<float, 18> _prime_k = {3,  7, 13, 19, 29, 37,
                                                43, 53, 61, 71, 79, 89,
                                                97, 101, 107, 113, 131, 139};
         std::vector<lat_lon_coord> _data_set;
         std::vector<float> _lat;
         std::vector<float> _lon;
-        std::vector<bool> _indices;
+        std::vector<bool> _mask;
 
-        uint32_t prime_ix{0};
+        uint32_t _prime_ix{0};
+        size_t _k{3};
 
-        std::vector<float> calculateDistances(lat_lon_coord currentPoint, const std::vector<lat_lon_coord>& kNearestPoints);
+        std::vector<float> calculateDistances(lat_lon_coord currentPoint, 
+                                              const std::vector<lat_lon_coord>& kNearestPoints);
+
         float haversineDistance(lat_lon_coord first, lat_lon_coord second);
 
-        std::vector<bool> getKNearest(uint32_t currentPointIndex, uint32_t k);
+        std::vector<bool> getKNearest(uint32_t currentPointIndex, size_t k = 3);
 
         float getNextK();
 
@@ -75,9 +83,14 @@ namespace Clustering
         // TODO: refacto to NOT use recursion - it is not efficient.
         void recurseCalculate(const std::vector<lat_lon_coord>& points, uint32_t k = 3);
 
-        template<typename Type>
-        std::vector<Type> KmeansConcaveHull::getMaskedArray(const std::vector<Type>& input_array, std::vector<bool>& mask);
+        std::vector<uint32_t> getMaskedIndices(const std::vector<uint32_t>& input_array, 
+                                                                  const std::vector<bool>& mask);
 
+        template<typename T>
+        std::vector<uint32_t> argsort(const std::vector<T> &array);
+
+        template<typename T, typename K = T>
+        std::vector<K> arraySubset(const std::vector<T>& input_array, const std::vector<uint32_t>& indexes);
     };
 }
 
