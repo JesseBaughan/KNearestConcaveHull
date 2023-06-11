@@ -20,10 +20,10 @@ namespace Clustering
 {
     struct lat_lon_coord
     {
-        float Lat;
-        float Lon;
+        double Lat;
+        double Lon;
 
-        lat_lon_coord(float lat, float lon)
+        lat_lon_coord(double lat, double lon)
             : Lat(lat)
             , Lon(lon) {}
         
@@ -35,13 +35,13 @@ namespace Clustering
     class KmeansConcaveHull
     {
     public:
-        KmeansConcaveHull(const std::vector<float>& lat, const std::vector<float>& lon);
+        KmeansConcaveHull(const std::vector<double>& lat, const std::vector<double>& lon);
         ~KmeansConcaveHull() {};
 
         KmeansConcaveHull(const KmeansConcaveHull&) = delete;
         KmeansConcaveHull& operator = (const KmeansConcaveHull&) = delete;
 
-        std::vector<std::vector<float>> calculate(const std::vector<std::vector<float>>& points, size_t k = 0);
+        std::vector<std::vector<double>> calculate(const std::vector<std::vector<double>>& points, size_t k = 0);
 
         // These are temporarily public whilst we perform testing
         std::vector<bool> get_mask()    const { return _mask; }
@@ -49,27 +49,27 @@ namespace Clustering
         std::vector<uint32_t> getKNearest(uint32_t currentPointIndex, size_t k = 3);
 
     private:
-        const std::array<float, 18> _prime_k = {3,  7, 13, 19, 29, 37,
+        const std::array<double, 18> _prime_k = {3,  7, 13, 19, 29, 37,
                                                43, 53, 61, 71, 79, 89,
                                                97, 101, 107, 113, 131, 139};
         std::vector<lat_lon_coord> _data_set;
-        std::vector<float> _lat;
-        std::vector<float> _lon;
+        std::vector<double> _lat;
+        std::vector<double> _lon;
         std::vector<bool> _mask;
 
         uint32_t _prime_ix{0};
         size_t _k{3};
 
-        std::vector<float> calculateDistances(lat_lon_coord currentPoint, 
+        std::vector<double> calculateDistances(lat_lon_coord currentPoint, 
                                               const std::vector<lat_lon_coord>& kNearestPoints);
 
-        float haversineDistance(lat_lon_coord first, lat_lon_coord second);
+        double haversineDistance(lat_lon_coord first, lat_lon_coord second);
 
-        float getNextK();
+        double getNextK();
 
-        std::vector<float> calculateHeadings(lat_lon_coord currentPointIndex, 
+        std::vector<double> calculateHeadings(lat_lon_coord currentPointIndex, 
                                              const std::vector<lat_lon_coord>& searchPoints, 
-                                             float ref_heading=0.0f);
+                                             double ref_heading=0.0l);
 
         bool containedCheck(const std::vector<lat_lon_coord>& hull, lat_lon_coord point);
 

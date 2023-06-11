@@ -92,7 +92,8 @@ class TDSConcaveHull():
 
         arang = np.arange(len(ixs))
         base_indices = arang[ixs]
-
+        print("BASE_INDICES: ", base_indices)
+        print("IXS: ", ixs)
         print("IX: ", self.data_set[ix, :])
         print("MASKED DATASET: ", self.data_set[ixs, :])
         distances = self.haversine_distance(self.data_set[ix, :], self.data_set[ixs, :])

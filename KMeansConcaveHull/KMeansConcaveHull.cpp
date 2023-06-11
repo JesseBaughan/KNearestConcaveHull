@@ -10,6 +10,7 @@
  */
 
 #include <iostream>
+#include <stdio.h>
  
 #include <math.h>
 #include <cmath>
@@ -20,17 +21,17 @@
 
 namespace Clustering
 {
-    static inline float radians(float degrees)
+    static inline double radians(double degrees)
     {
         return (degrees * M_PI)  / 180.0f;
     }
 
-    static inline float degrees(float radians)
+    static inline double degrees(double radians)
     {
         return radians * (180.0 / M_PI);
     }
 
-    KmeansConcaveHull::KmeansConcaveHull(const std::vector<float>& lat, const std::vector<float>& lon)
+    KmeansConcaveHull::KmeansConcaveHull(const std::vector<double>& lat, const std::vector<double>& lon)
         : _lat(lat)
         , _lon(lon)
         , _mask(_lat.size(), true)
@@ -42,7 +43,7 @@ namespace Clustering
         }
     }
 
-    std::vector<std::vector<float>> KmeansConcaveHull::calculate(const std::vector<std::vector<float>> &points, size_t k)
+    std::vector<std::vector<double>> KmeansConcaveHull::calculate(const std::vector<std::vector<double>> &points, size_t k)
     {
         /*
         if isinstance(points, np.core.ndarray):
@@ -123,29 +124,29 @@ namespace Clustering
         */
     }
 
-    float KmeansConcaveHull::haversineDistance(const lat_lon_coord first, const lat_lon_coord second)
+    double KmeansConcaveHull::haversineDistance(const lat_lon_coord first, const lat_lon_coord second)
     {
-        const float earths_radius = 6371;
+        const double earths_radius = 6371;
 
         // Get the difference between our two points then radians the difference into radians
-        const float lat_delta = radians(second.Lat - first.Lat);
-        const float lon_delta = radians(second.Lon - first.Lon);
+        const double lat_delta = radians(second.Lat - first.Lat);
+        const double lon_delta = radians(second.Lon - first.Lon);
 
-        const float converted_lat1 = radians(first.Lat);
-        const float converted_lat2 = radians(second.Lat);
+        const double converted_lat1 = radians(first.Lat);
+        const double converted_lat2 = radians(second.Lat);
 
-        const float a =
+        const double a =
             pow(sin(lat_delta / 2), 2) + cos(converted_lat1) * cos(converted_lat2) * pow(sin(lon_delta / 2), 2);
 
-        const float c = 2 * atan2(sqrt(a), sqrt(1 - a));
-        const float d = earths_radius * c;
+        const double c = 2 * atan2(sqrt(a), sqrt(1 - a));
+        const double d = earths_radius * c;
 
         return d;
     }
 
-    std::vector<float> KmeansConcaveHull::calculateDistances(lat_lon_coord currentPoint, const std::vector<lat_lon_coord>& kNearestPoints)
+    std::vector<double> KmeansConcaveHull::calculateDistances(lat_lon_coord currentPoint, const std::vector<lat_lon_coord>& kNearestPoints)
     {
-        std::vector<float> distances;
+        std::vector<double> distances;
         distances.reserve(kNearestPoints.size());
         for(int i = 0; i < kNearestPoints.size(); i++)
         {
@@ -157,8 +158,8 @@ namespace Clustering
 
     uint32_t KmeansConcaveHull::getLowestLatitudeIndex()
     {
-        std::vector<float> temp_lats = _lat;
-        std::vector<float>::iterator it = std::min_element(std::begin(temp_lats), std::end(temp_lats));
+        std::vector<double> temp_lats = _lat;
+        std::vector<double>::iterator it = std::min_element(std::begin(temp_lats), std::end(temp_lats));
         uint32_t index = std::distance(std::begin(temp_lats), it);
         return index;
     }
@@ -189,16 +190,27 @@ namespace Clustering
 
     std::vector<uint32_t> KmeansConcaveHull::getKNearest(uint32_t currentPointIndex, size_t k)
     {
+        printf("CURRENT POINT INDEX: %u\n", currentPointIndex);
+        printf("IX: [%.8f, %.8f]\n", _data_set[currentPointIndex].Lat, _data_set[currentPointIndex].Lon);
+
+        _mask[6] = false;
         std::vector<uint32_t> base_indices = getMaskedIndices(range(_mask.size()), _mask);
+        printf("BASE_INDICES: [");
+        for(auto& index: base_indices)
+        {
+            printf("%u, ", index);
+        }
+        std::cout << "]" << std::endl;
+
         std::vector<lat_lon_coord> masked_data_set = arraySubset(_data_set, base_indices);
         for(auto& coord: masked_data_set)
         {
-            std::cout << coord.Lat << ", " << coord.Lon << std::endl;
+            printf("[%.8lf, %.8lf]\n", coord.Lat, coord.Lon);
         }
         //We need to calculate the distances array from the point to all other points
         //std::cout << masked_data_set[currentPointIndex].Lat << ", " << masked_data_set[currentPointIndex].Lon << std::endl;
 
-        std::vector<float> distances = calculateDistances(masked_data_set[currentPointIndex], masked_data_set);
+        std::vector<double> distances = calculateDistances(masked_data_set[currentPointIndex], masked_data_set);
 
         for(auto& distance: distances)
         {
@@ -250,7 +262,7 @@ namespace Clustering
         return indices;
     }
 
-    float KmeansConcaveHull::getNextK()
+    double KmeansConcaveHull::getNextK()
     {
         if (_prime_ix < _prime_k.size())
         {
@@ -262,9 +274,9 @@ namespace Clustering
         }
     }
 
-    std::vector<float> calculateHeadings(lat_lon_coord currentPointIndex, 
+    std::vector<double> calculateHeadings(lat_lon_coord currentPointIndex, 
                                         const std::vector<lat_lon_coord>& searchPoints, 
-                                        float ref_heading = 0.0f)
+                                        double ref_heading = 0.0l)
     {
         /*
         if ((ref_heading < 0.0f) || (ref_heading >= 360.0f))
@@ -287,7 +299,7 @@ namespace Clustering
         bearings[bearings < 0.0] += 360.0;
         return bearings
         */
-        return std::vector<float>(3, 1.0f);
+        return std::vector<double>(3, 1.0f);
     }
 
     bool containedCheck(const std::vector<lat_lon_coord>& hull, lat_lon_coord point)
