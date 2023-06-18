@@ -131,7 +131,7 @@ namespace Clustering
 
     double KmeansConcaveHull::haversineDistance(const lat_lon_coord first, const lat_lon_coord second)
     {
-        const double earths_radius = 6371;
+        const double earths_radius = 6371000.0f;
 
         // Get the difference between our two points then radians the difference into radians
         const double lat_delta = radians(second.Lat - first.Lat);
@@ -164,7 +164,7 @@ namespace Clustering
     uint32_t KmeansConcaveHull::getLowestLatitudeIndex()
     {
         std::vector<double> temp_lats = _lat;
-        std::vector<double>::iterator it = std::min_element(std::begin(temp_lats), std::end(temp_lats));
+        std::vector<double>::iterator it = std::max_element(std::begin(temp_lats), std::end(temp_lats));
         uint32_t index = std::distance(std::begin(temp_lats), it);
         return index;
     }
@@ -195,46 +195,13 @@ namespace Clustering
 
     std::vector<uint32_t> KmeansConcaveHull::getKNearest(uint32_t currentPointIndex, size_t k)
     {
-        printf("CURRENT POINT INDEX: %u\n", currentPointIndex);
-        printf("IX: [%.8f, %.8f]\n", _data_set[currentPointIndex].Lat, _data_set[currentPointIndex].Lon);
-
+        // Harcoded for testing purposes.
         _mask[6] = false;
-        printf("IXS: [");
-        for(int i = 0; i < _mask.size(); i++)
-        {
-            std::cout << _mask[i] << ", ";
-        }
-        std::cout << "]" << std::endl;
-
         std::vector<uint32_t> base_indices = getMaskedIndices(range(_mask.size()), _mask);
-        printf("BASE_INDICES: [");
-        for(auto& index: base_indices)
-        {
-            printf("%u, ", index);
-        }
-        std::cout << "]" << std::endl;
-
-        printf("DATASET: [");
-        for(int i = 0; i < _data_set.size(); i++)
-        {
-            printf("[%.8lf, %.8lf]\n", _data_set[i].Lat, _data_set[i].Lon);
-        }
 
         std::vector<lat_lon_coord> masked_data_set = arraySubset(_data_set, base_indices);
-        printf("MASKED_DATASET: [");
-        for(auto& coord: masked_data_set)
-        {
-            printf("[%.8lf, %.8lf]\n", coord.Lat, coord.Lon);
-        }
-        //We need to calculate the distances array from the point to all other points
-        //std::cout << masked_data_set[currentPointIndex].Lat << ", " << masked_data_set[currentPointIndex].Lon << std::endl;
 
-        std::vector<double> distances = calculateDistances(masked_data_set[currentPointIndex], masked_data_set);
-
-        for(auto& distance: distances)
-        {
-            std::cout << distance << std::endl;
-        }
+        std::vector<double> distances = calculateDistances(_data_set[currentPointIndex], masked_data_set);
 
         //Sort the distances array in non-decending order
         std::vector<uint32_t> sorted_indices = argsort(distances);
