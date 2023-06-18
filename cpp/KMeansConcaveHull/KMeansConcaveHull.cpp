@@ -44,7 +44,7 @@ namespace Clustering
         std::sort(_data_set.begin(), _data_set.end(),
                 [](const lat_lon_coord& left, const lat_lon_coord& right) -> bool {
                     // sort indices according to corresponding array element
-                    return left.Lat < right.Lat;
+                    return left.Lon < right.Lon;
                 });
     }
 
@@ -127,6 +127,9 @@ namespace Clustering
         except Exception as e:
             print("HullCalculator error: " + str(e))
         */
+
+        std::vector<std::vector<double>> poo(5);
+        return poo;
     }
 
     double KmeansConcaveHull::haversineDistance(const lat_lon_coord first, const lat_lon_coord second)
@@ -161,10 +164,23 @@ namespace Clustering
         return distances;
     }
 
+    std::vector<double> KmeansConcaveHull::get_lats(std::vector<lat_lon_coord>& coords)
+    {
+        std::vector<double> lats;
+        lats.reserve(coords.size());
+
+        for(auto& coord: coords)
+        {
+            lats.push_back(coord.Lat);
+        }
+
+        return lats;
+    }
+
     uint32_t KmeansConcaveHull::getLowestLatitudeIndex()
     {
-        std::vector<double> temp_lats = _lat;
-        std::vector<double>::iterator it = std::max_element(std::begin(temp_lats), std::end(temp_lats));
+        std::vector<double> temp_lats = get_lats(_data_set);
+        std::vector<double>::iterator it = std::min_element(std::begin(temp_lats), std::end(temp_lats));
         uint32_t index = std::distance(std::begin(temp_lats), it);
         return index;
     }
@@ -196,7 +212,7 @@ namespace Clustering
     std::vector<uint32_t> KmeansConcaveHull::getKNearest(uint32_t currentPointIndex, size_t k)
     {
         // Harcoded for testing purposes.
-        _mask[6] = false;
+        _mask[1] = false;
         std::vector<uint32_t> base_indices = getMaskedIndices(range(_mask.size()), _mask);
 
         std::vector<lat_lon_coord> masked_data_set = arraySubset(_data_set, base_indices);

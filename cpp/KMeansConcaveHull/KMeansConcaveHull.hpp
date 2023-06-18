@@ -84,6 +84,8 @@ namespace Clustering
 
         template<typename T, typename K = T>
         std::vector<K> arraySubset(const std::vector<T>& input_array, const std::vector<uint32_t>& indexes);
+
+        std::vector<double> get_lats(std::vector<lat_lon_coord>& coords);
     };
 }
 

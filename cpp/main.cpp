@@ -17,7 +17,7 @@ int main()
 
     uint32_t index = hullCalc.getLowestLatitudeIndex();
 
-    std::vector<uint32_t> indicies = hullCalc.getKNearest(6);
+    std::vector<uint32_t> indicies = hullCalc.getKNearest(index);
 
     for(auto index: indicies)
     {
