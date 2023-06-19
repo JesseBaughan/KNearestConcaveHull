@@ -130,7 +130,7 @@ class TDSConcaveHull():
             np.multiply(np.cos(r_ixs[:, 1]), np.cos(lon_dif))
         bearings = (np.degrees(np.arctan2(y, x)) + 360.0) % 360.0 - ref_heading
 
-        bearings[bearings< 0.0] += 360.0
+        bearings[bearings < 0.0] += 360.0
         return bearings
 
     """

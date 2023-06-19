@@ -16,6 +16,7 @@
 #include <cmath>
 #include <algorithm>
 #include <numeric>
+#include <assert.h>
 
 #include "KMeansConcaveHull.hpp"
 
@@ -164,7 +165,7 @@ namespace Clustering
         return distances;
     }
 
-    std::vector<double> KmeansConcaveHull::get_lats(std::vector<lat_lon_coord>& coords)
+    std::vector<double> KmeansConcaveHull::getLats(std::vector<lat_lon_coord>& coords)
     {
         std::vector<double> lats;
         lats.reserve(coords.size());
@@ -178,7 +179,7 @@ namespace Clustering
 
     uint32_t KmeansConcaveHull::getLowestLatitudeIndex()
     {
-        std::vector<double> temp_lats = get_lats(_data_set);
+        std::vector<double> temp_lats = getLats(_data_set);
         std::vector<double>::iterator it = std::min_element(std::begin(temp_lats), std::end(temp_lats));
         uint32_t index = std::distance(std::begin(temp_lats), it);
         return index;
@@ -210,9 +211,10 @@ namespace Clustering
     std::vector<uint32_t> KmeansConcaveHull::getKNearest(uint32_t currentPointIndex, size_t k)
     {
         // Harcoded for testing purposes.
+        _mask[1] = false;
         std::vector<uint32_t> base_indices = getMaskedIndices(range(_mask.size()), _mask);
 
-        std::vector<lat_lon_coord> masked_data_set = arraySubset(_data_set, base_indices);
+        std::vector<lat_lon_coord> masked_data_set = arraySubset<lat_lon_coord>(_data_set, base_indices);
 
         std::vector<double> distances = calculateDistances(_data_set[currentPointIndex], masked_data_set);
 
@@ -224,22 +226,9 @@ namespace Clustering
         sorted_indices.resize(k_check);
 
         //Set the index of the lowest K points to True, rest are false
-        std::vector<uint32_t> kNearest = arraySubset(base_indices, sorted_indices);
+        std::vector<uint32_t> kNearest = arraySubset<uint32_t>(base_indices, sorted_indices);
         
         return kNearest;
-    }
-
-    template<typename T, typename K>
-    std::vector<K> KmeansConcaveHull::arraySubset(const std::vector<T>& input_array, const std::vector<uint32_t>& indexes)
-    {
-        std::vector<K> output_array(indexes.size());
-
-        for(int i = 0; i < indexes.size(); i++)
-        {
-            output_array[i] = input_array[indexes[i]];
-        }
-
-        return output_array;
     }
 
     /**
@@ -273,32 +262,51 @@ namespace Clustering
         }
     }
 
-    std::vector<double> calculateHeadings(lat_lon_coord currentPointIndex, 
-                                        const std::vector<lat_lon_coord>& searchPoints, 
-                                        double ref_heading = 0.0l)
+    double KmeansConcaveHull::calculateHeading(lat_lon_coord reference, lat_lon_coord target, double ref_heading)
     {
-        /*
         if ((ref_heading < 0.0f) || (ref_heading >= 360.0f))
         {
-            //raise ValueError("The reference heading must be in the range [0, 360]")
+            assert(false);
         }
         
-        float r_ix = radians(self.data_set[ix, :]);
-        float r_ixs = radians(self.data_set[ixs, :]);
+        double referencePointLat_rads = radians(reference.Lat);
+        double referencePointLon_rads = radians(reference.Lon);
+        double targetPointLat_rads = radians(target.Lat);
+        double targetPointLon_rads = radians(target.Lon);
 
-        float lon_dif = r_ixs[:, 0] - r_ix[0];
+        double lon_dif = targetPointLon_rads - referencePointLon_rads;
 
-        float y = np.multiply(sin(lon_dif), cos(r_ixs[:, 1]));
+        float y = sin(lon_dif) * cos(targetPointLat_rads);
 
-        float x = cos(r_ix[1]) * sin(r_ixs[:, 1]) - sin(r_ix[1]) *
-                np.multiply(cos(r_ixs[:, 1]), cos(lon_dif));
+        float x = cos(referencePointLat_rads) * sin(targetPointLat_rads) - sin(referencePointLat_rads) *
+                cos(targetPointLat_rads) * cos(lon_dif);
 
-        float bearings = (degrees(arctan2(y, x)) + 360.0f) % 360.0f - ref_heading;
+        float bearing = std::fmod((degrees(atan2(y, x)) + 360.0l), 360.0l) - ref_heading;
 
-        bearings[bearings < 0.0] += 360.0;
-        return bearings
-        */
-        return std::vector<double>(3, 1.0f);
+        if(bearing < 0.0l)
+        {
+            bearing += 360.0l;
+        }
+        return bearing;
+    }
+
+    std::vector<double> KmeansConcaveHull::calculateHeadings(uint32_t currentPointIndex, 
+                                                            const std::vector<uint32_t>& searchPointsIndicies, 
+                                                            double ref_heading)
+    {
+        // Get the subset of points we are calculating heading to 
+        std::vector<lat_lon_coord> searchPoints = arraySubset(_data_set, searchPointsIndicies);
+        lat_lon_coord currentPoint = _data_set[currentPointIndex];
+
+        std::vector<double> headings;
+        headings.reserve(searchPoints.size());
+        for(int i = 0; i < searchPoints.size(); i++)
+        {
+            double heading = calculateHeading(currentPoint, searchPoints[i], ref_heading);
+            headings.push_back(heading);
+        }
+
+        return headings;
     }
 
     bool containedCheck(const std::vector<lat_lon_coord>& hull, lat_lon_coord point)

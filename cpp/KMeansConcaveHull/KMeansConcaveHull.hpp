@@ -48,6 +48,9 @@ namespace Clustering
         uint32_t getLowestLatitudeIndex();
         std::vector<uint32_t> getKNearest(uint32_t currentPointIndex, size_t k = 3);
 
+        std::vector<double> calculateHeadings(uint32_t currentPointIndex, 
+                                             const std::vector<uint32_t>& searchPoints, 
+                                             double ref_heading=0.0l);
     private:
         const std::array<double, 18> _prime_k = {3,  7, 13, 19, 29, 37,
                                                43, 53, 61, 71, 79, 89,
@@ -67,9 +70,7 @@ namespace Clustering
 
         double getNextK();
 
-        std::vector<double> calculateHeadings(lat_lon_coord currentPointIndex, 
-                                             const std::vector<lat_lon_coord>& searchPoints, 
-                                             double ref_heading=0.0l);
+        double calculateHeading(lat_lon_coord reference, lat_lon_coord target, double ref_heading);
 
         bool containedCheck(const std::vector<lat_lon_coord>& hull, lat_lon_coord point);
 
@@ -82,10 +83,20 @@ namespace Clustering
         template<typename T>
         std::vector<uint32_t> argsort(const std::vector<T> &array);
 
-        template<typename T, typename K = T>
-        std::vector<K> arraySubset(const std::vector<T>& input_array, const std::vector<uint32_t>& indexes);
+        template<typename Type>
+        std::vector<Type> arraySubset(const std::vector<Type>& input_array, const std::vector<uint32_t>& indexes)
+        {
+            std::vector<Type> output_array;
+            output_array.reserve(indexes.size());
+            for(int i = 0; i < indexes.size(); i++)
+            {
+                output_array.push_back(input_array[indexes[i]]);
+            }
 
-        std::vector<double> get_lats(std::vector<lat_lon_coord>& coords);
+            return output_array;
+        }
+
+        std::vector<double> getLats(std::vector<lat_lon_coord>& coords);
     };
 }
 
