@@ -168,7 +168,6 @@ namespace Clustering
     {
         std::vector<double> lats;
         lats.reserve(coords.size());
-
         for(auto& coord: coords)
         {
             lats.push_back(coord.Lat);
@@ -189,7 +188,6 @@ namespace Clustering
     {
         std::vector<uint32_t> masked_array;
         masked_array.reserve(input_array.size());
-
         for(int i = 0; i < input_array.size(); i++)
         {
             if(mask[i] == true)
@@ -212,7 +210,6 @@ namespace Clustering
     std::vector<uint32_t> KmeansConcaveHull::getKNearest(uint32_t currentPointIndex, size_t k)
     {
         // Harcoded for testing purposes.
-        _mask[1] = false;
         std::vector<uint32_t> base_indices = getMaskedIndices(range(_mask.size()), _mask);
 
         std::vector<lat_lon_coord> masked_data_set = arraySubset(_data_set, base_indices);
