@@ -51,6 +51,11 @@ namespace Clustering
 
     std::vector<std::vector<double>> KmeansConcaveHull::iterativeCalculate()
     {
+        //Check our data
+        //TODO: do we want to do data init that we do in constuctor here and 
+        // therefore take the dataset as input to this function?
+        // We could reduce constructing this class over and over if we 
+        // can just pass in data. Also having NO class globals would be preferred.
         if (_data_set.size() <= 3)
         {
             std::cout << "Skipped hull calc <= 3 points" << std::endl;
@@ -80,6 +85,8 @@ namespace Clustering
             
             // Not sure what the self mask [self mask] is doing.
             //while ((current_point != first_point) or (step == 2)) && (self._mask[self._mask]) > 0:
+            // This is the main logic that is stepping through our dataset and attempting to draw 
+            // a concanve hull. This could probably be abstracted into it's own function.
             while (((current_point != first_point) or (step == 2)) && (self._mask[self._mask]) > 0)
             {
                 if (step == stop)
@@ -128,12 +135,13 @@ namespace Clustering
 
             if(currentKValueFail)
             {
-                break;
+                continue;
             }
             
             uint32_t count = 0;
             size_t total = _data_set.size();
 
+            // Check if all our our data set is within our candidate hull 
             for (int ix = 0; ix < total; ix++)
             {
                 // TODO: We are going to have to write a contained check.
@@ -147,6 +155,8 @@ namespace Clustering
                 }
             }
             
+            // If all of our points are within our hull then we can return the hull (success)
+            // Else we need to go and try the process again with a new K value.
             if (count == total)
             {
                 hull = np.append(hull, [hull[0]], axis=0);
