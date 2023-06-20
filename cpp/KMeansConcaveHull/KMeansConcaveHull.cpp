@@ -83,19 +83,20 @@ namespace Clustering
             
             std::vector<uint32_t> knn = getKNearest(current_point, k_check);
 
-            std::vector<double> angles = self.calculate_headings(current_point, knn, prev_angle);
+            std::vector<double> angles = calculateHeadings(current_point, knn, prev_angle);
 
             std::vector<uint32_t> candidates = np.argsort(-angles);
 
             uint32_t i = 0;
             bool invalid_hull = true;
-            
+            uint32_t candidate = candidates[i++];
+
             while (invalid_hull && (i < candidates.size()))
             {
                 uint32_t candidate = candidates[i];
 
                 // All of this stuff needs working out.
-                next_point = np.reshape(self.data_set[knn[candidate]], (1,2));
+                uint32_t next_point = np.reshape(self.data_set[knn[candidate]], (1,2));
                 test_hull = np.append(hull, next_point, axis=0);
 
                 // How the heck are we going to work out if there is a collision of two lines??
@@ -106,7 +107,7 @@ namespace Clustering
 
             if (invalid_hull)
             {
-                return self.recurse_calculate();
+                return recurseCalculate();
             }
 
             std::vector<double> prev_angle = calculateHeadings(knn[candidate], np.array([current_point]));
@@ -142,7 +143,7 @@ namespace Clustering
         else
         {
             // TODO: need to write this or implement iterative approach.
-            return self.recurse_calculate();
+            return recurseCalculate();
         }
 
         std::vector<std::vector<double>> poo(5);
