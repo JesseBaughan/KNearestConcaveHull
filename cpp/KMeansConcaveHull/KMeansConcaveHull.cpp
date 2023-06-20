@@ -49,85 +49,101 @@ namespace Clustering
                 });
     }
 
-    std::vector<std::vector<double>> KmeansConcaveHull::calculate(const std::vector<std::vector<double>> &points, size_t k)
+    std::vector<std::vector<double>> KmeansConcaveHull::calculate(size_t k)
     {
-        /*
-        if isinstance(points, np.core.ndarray):
-            self.data_set = points
-        else:
-            raise ValueError("Please provide a [N,2] numpy array")
-        self.data_set = np.unique(self.data_set, axis=0)
+        if (_data_set.size() <= 3)
+        {
+            std::cout << "Skipped hull calc <= 3 points" << std::endl;
+            //return something?
+        }
         
-        self.indices = np.ones(self.data_set.shape[0], dtype=bool)
+        uint32_t k_check = std::min(k, _data_set.size());
 
-        try:
-            if self.data_set.shape[0] <= 3:
-                print("Skipped hull calc <= 3 points")
-                #timing_logger.info("Skipped hull calc <= 3 points")
-                return self.data_set
+        uint32_t first_point = getLowestLatitudeIndex();
+        uint32_t current_point = first_point;
+        
+        // This needs fixing and working out how to do in c++
+        hull = np.reshape(np.array(self.data_set[first_point, :]), (1, 2))
+        test_hull = hull;
+
+        _mask[first_point] = false;
+
+        double prev_angle = 270.0l;
+        uint32_t step = 2;
+        uint32_t stop = step + k_check;
+        
+        // Not sure what the self mask [self mask] is doing.
+        //while ((current_point != first_point) or (step == 2)) && (self._mask[self._mask]) > 0:
+        while (((current_point != first_point) or (step == 2)) && (self._mask[self._mask]) > 0)
+        {
+            if (step == stop)
+            {
+                _mask[first_point] = true;
+            }
             
-            k_check = min(k, self.data_set.shape[0]) 
+            std::vector<uint32_t> knn = getKNearest(current_point, k_check);
 
-            first_point = self.get_lowest_latitude_index(self.data_set)
-            current_point = first_point
+            std::vector<double> angles = self.calculate_headings(current_point, knn, prev_angle);
+
+            std::vector<uint32_t> candidates = np.argsort(-angles);
+
+            uint32_t i = 0;
+            bool invalid_hull = true;
             
-            hull = np.reshape(np.array(self.data_set[first_point, :]), (1, 2))
-            test_hull = hull
+            while (invalid_hull && (i < candidates.size()))
+            {
+                uint32_t candidate = candidates[i];
 
-            self.indices[first_point] = False
+                // All of this stuff needs working out.
+                next_point = np.reshape(self.data_set[knn[candidate]], (1,2));
+                test_hull = np.append(hull, next_point, axis=0);
 
-            prev_angle = 270
-            step = 2
-            stop = step + k_check
+                // How the heck are we going to work out if there is a collision of two lines??
+                line = LineString(test_hull);
+                bool invalid_hull = !line.is_simple;
+                i += 1;
+            }
+
+            if (invalid_hull)
+            {
+                return self.recurse_calculate();
+            }
+
+            std::vector<double> prev_angle = calculateHeadings(knn[candidate], np.array([current_point]));
+            uint32_t current_point = knn[candidate];
+            // Work out how to store this data.
+            hull = test_hull;
             
-            while ((current_point != first_point) or (step == 2)) and len(self.indices[self.indices]) > 0:
-                if step == stop:
-                    self.indices[first_point] = True
-                
-                knn = self.get_k_nearest(current_point, k_check)
+            _mask[current_point] = false;
+            step += 1;
+        }
+        
+        uint32_t count = 0;
+        size_t total = _data_set.size();
 
-                angles = self.calculate_headings(current_point, knn, prev_angle)
-
-                candidates = np.argsort(-angles)
-
-                i = 0
-                invalid_hull = True
-                
-                while invalid_hull and i < len(candidates):
-                    candidate = candidates[i]
-
-                    next_point = np.reshape(self.data_set[knn[candidate]], (1,2))
-                    test_hull = np.append(hull, next_point, axis=0)
-                    line = LineString(test_hull)
-                    invalid_hull = not line.is_simple
-                    i += 1
-
-                if invalid_hull:
-                    return self.recurse_calculate()
-
-                prev_angle = self.calculate_headings(knn[candidate], np.array([current_point]))
-                current_point = knn[candidate]
-                hull = test_hull
-                
-                self.indices[current_point] = False
-                step += 1
-            
-            count = 0
-            total = self.data_set.shape[0]
-            for ix in range(total):
-                if self.__contained_check(hull, self.data_set[ix, :]):
-                    count += 1
-                else:
-                    break
-            
-            if count == total:
-                hull = np.append(hull, [hull[0]], axis=0)
-                return hull
-            else: 
-                return self.recurse_calculate()
-        except Exception as e:
-            print("HullCalculator error: " + str(e))
-        */
+        for (int ix = 0; ix < total; ix++)
+        {
+            // TODO: We are going to have to write a contained check.
+            if (__contained_check(hull, self.data_set[ix, :]))
+            {
+                count += 1;
+            }
+            else 
+            {
+                break;
+            }
+        }
+        
+        if (count == total)
+        {
+            hull = np.append(hull, [hull[0]], axis=0);
+            return hull;
+        }
+        else
+        {
+            // TODO: need to write this or implement iterative approach.
+            return self.recurse_calculate();
+        }
 
         std::vector<std::vector<double>> poo(5);
         return poo;
