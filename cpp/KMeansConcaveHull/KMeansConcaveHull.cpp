@@ -49,6 +49,118 @@ namespace Clustering
                 });
     }
 
+    std::vector<std::vector<double>> KmeansConcaveHull::iterativeCalculate()
+    {
+        if (_data_set.size() <= 3)
+        {
+            std::cout << "Skipped hull calc <= 3 points" << std::endl;
+            //return something?
+        }
+
+        std::vector<std::vector<double>> hull;
+        hull.reserve(_data_set.size());
+
+        for (auto& k: _prime_k)
+        {
+            uint32_t k_check = std::min(static_cast<size_t>(k), _data_set.size());
+
+            uint32_t first_point = getLowestLatitudeIndex();
+            uint32_t current_point = first_point;
+            
+            // This needs fixing and working out how to do in c++
+            hull = np.reshape(np.array(self.data_set[first_point, :]), (1, 2))
+            test_hull = hull;
+
+            _mask[first_point] = false;
+
+            double prev_angle = 270.0l;
+            uint32_t step = 2;
+            uint32_t stop = step + k_check;
+            bool currentKValueFail = false;
+            
+            // Not sure what the self mask [self mask] is doing.
+            //while ((current_point != first_point) or (step == 2)) && (self._mask[self._mask]) > 0:
+            while (((current_point != first_point) or (step == 2)) && (self._mask[self._mask]) > 0)
+            {
+                if (step == stop)
+                {
+                    _mask[first_point] = true;
+                }
+                
+                std::vector<uint32_t> knn = getKNearest(current_point, k_check);
+
+                std::vector<double> angles = calculateHeadings(current_point, knn, prev_angle);
+
+                std::vector<uint32_t> candidates = np.argsort(-angles);
+
+                uint32_t i = 0;
+                bool invalid_hull = true;
+                uint32_t candidate = candidates[i++];
+
+                while (invalid_hull && (i < candidates.size()))
+                {
+                    uint32_t candidate = candidates[i];
+
+                    // All of this stuff needs working out.
+                    uint32_t next_point = np.reshape(self.data_set[knn[candidate]], (1,2));
+                    test_hull = np.append(hull, next_point, axis=0);
+
+                    // How the heck are we going to work out if there is a collision of two lines??
+                    line = LineString(test_hull);
+                    bool invalid_hull = !line.is_simple;
+                    i += 1;
+                }
+
+                if (invalid_hull)
+                {
+                    currentKValueFail = true;
+                    break;
+                }
+
+                std::vector<double> prev_angle = calculateHeadings(knn[candidate], np.array([current_point]));
+                uint32_t current_point = knn[candidate];
+                // Work out how to store this data.
+                hull = test_hull;
+                
+                _mask[current_point] = false;
+                step += 1;
+            }
+
+            if(currentKValueFail)
+            {
+                break;
+            }
+            
+            uint32_t count = 0;
+            size_t total = _data_set.size();
+
+            for (int ix = 0; ix < total; ix++)
+            {
+                // TODO: We are going to have to write a contained check.
+                if (__contained_check(hull, _data_set[ix, :]))
+                {
+                    count += 1;
+                }
+                else 
+                {
+                    break;
+                }
+            }
+            
+            if (count == total)
+            {
+                hull = np.append(hull, [hull[0]], axis=0);
+                break; //we have found a solution.
+            }
+            else
+            {
+                continue;
+            }
+        }
+
+        return hull;
+    }
+
     std::vector<std::vector<double>> KmeansConcaveHull::calculate(size_t k)
     {
         if (_data_set.size() <= 3)

@@ -43,6 +43,8 @@ namespace Clustering
 
         std::vector<std::vector<double>> calculate(const std::vector<std::vector<double>>& points, size_t k = 0);
 
+        std::vector<std::vector<double>> KmeansConcaveHull::iterativeCalculate();
+
         // These are temporarily public whilst we perform testing
         std::vector<bool> get_mask()    const { return _mask; }
         uint32_t getLowestLatitudeIndex();
