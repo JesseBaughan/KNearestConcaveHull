@@ -205,7 +205,9 @@ namespace Clustering
         // This needs fixing and working out how to do in c++
         //hull = np.reshape(np.array(self.data_set[first_point, :]), (1, 2))
         //test_hull = hull;
-        lat_lon_coord hull = _data_set[first_point];
+        std::vector<lat_lon_coord> hull; 
+        hull.push_back(_data_set[first_point]);
+        std::vector<lat_lon_coord> test_hull = hull;
 
         _mask[first_point] = false;
 
@@ -231,24 +233,26 @@ namespace Clustering
 
             uint32_t i = 0;
             bool invalid_hull = true;
-            uint32_t candidate = candidates[i++];
-        }
 
-            /*
             while (invalid_hull && (i < candidates.size()))
             {
                 uint32_t candidate = candidates[i];
 
                 // All of this stuff needs working out.
-                uint32_t next_point = np.reshape(self.data_set[knn[candidate]], (1,2));
-                test_hull = np.append(hull, next_point, axis=0);
+                //uint32_t next_point = np.reshape(self.data_set[knn[candidate]], (1,2));
+                lat_lon_coord next_point = _data_set[knn[candidate]];
+
+                //test_hull = np.append(hull, next_point, axis=0);
+                test_hull.push_back(next_point);
 
                 // How the heck are we going to work out if there is a collision of two lines??
-                line = LineString(test_hull);
-                bool invalid_hull = !line.is_simple;
-                i += 1;
+                //line = LineString(test_hull);
+                //bool invalid_hull = !line.is_simple;
+                //i += 1;
             }
+        }
 
+            /*
             if (invalid_hull)
             {
                 return recurseCalculate();
