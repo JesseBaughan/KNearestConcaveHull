@@ -29,5 +29,26 @@ int main()
 
     hullCalc.calculate(3);
 
+	Clustering::pdd A(1, 1);
+	Clustering::pdd B(4, 4);
+	Clustering::pdd C(1, 7);
+	Clustering::pdd D(3, 4);
+    Clustering::pdd intersectPoint = Clustering::lineLineIntersection(A, B, C, D);
+
+	if (intersectPoint.first == FLT_MAX &&
+		intersectPoint.second==FLT_MAX)
+	{
+		std::cout << "The given lines AB and CD are parallel.\n";
+	}
+
+	else
+	{
+		// NOTE: Further check can be applied in case
+		// of line segments. Here, we have considered AB
+		// and CD as lines
+		std::cout << "The intersection of the given lines AB "
+				"and CD is: ";
+	}
+
     return 0;
 }
