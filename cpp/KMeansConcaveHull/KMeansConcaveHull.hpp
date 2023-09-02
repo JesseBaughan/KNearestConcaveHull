@@ -63,10 +63,6 @@ namespace Clustering
                                              const std::vector<uint32_t>& searchPoints, 
                                              double ref_heading=0.0l);
 
-        template<typename T>
-        void NegateArray(std::vector<T>& inputVector);
-
-
     private:
         const std::array<double, 18> _prime_k = {3,  7, 13, 19, 29, 37,
                                                43, 53, 61, 71, 79, 89,

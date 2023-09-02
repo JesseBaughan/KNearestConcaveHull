@@ -173,9 +173,24 @@ namespace Clustering
     }
     */
     
+    uint32_t NumTrueBools(const std::vector<bool>& boolVector)
+    {
+        uint32_t numTrueBools = 0;
+
+        // TODO: USE STL COUNT_IF ALGORIGHTM?
+        for(const auto& value : boolVector)
+        {
+            if(value == true)
+            {
+                numTrueBools++;
+            }
+        }
+
+        return numTrueBools;
+    }
+    
     std::vector<std::vector<double>> KmeansConcaveHull::calculate(size_t k)
     {
-        /*
         if (_data_set.size() <= 3)
         {
             std::cout << "Skipped hull calc <= 3 points" << std::endl;
@@ -188,8 +203,9 @@ namespace Clustering
         uint32_t current_point = first_point;
         
         // This needs fixing and working out how to do in c++
-        hull = np.reshape(np.array(self.data_set[first_point, :]), (1, 2))
-        test_hull = hull;
+        //hull = np.reshape(np.array(self.data_set[first_point, :]), (1, 2))
+        //test_hull = hull;
+        lat_lon_coord hull = _data_set[first_point];
 
         _mask[first_point] = false;
 
@@ -197,9 +213,8 @@ namespace Clustering
         uint32_t step = 2;
         uint32_t stop = step + k_check;
         
-        // Not sure what the self mask [self mask] is doing.
         //while ((current_point != first_point) or (step == 2)) && (self._mask[self._mask]) > 0:
-        while (((current_point != first_point) or (step == 2)) && (self._mask[self._mask]) > 0)
+        while ((((current_point != first_point) || (step == 2)) && NumTrueBools(_mask)) > 0)
         {
             if (step == stop)
             {
@@ -211,12 +226,13 @@ namespace Clustering
             std::vector<double> angles = calculateHeadings(current_point, knn, prev_angle);
 
             //TODO: why do we negate the array here?
-            NegateArray(angles);
+            NegateArray<double>(angles);
             std::vector<uint32_t> candidates = argsort<double>(angles);
 
             uint32_t i = 0;
             bool invalid_hull = true;
             uint32_t candidate = candidates[i++];
+        }
 
             /*
             while (invalid_hull && (i < candidates.size()))

@@ -27,5 +27,7 @@ int main()
         std::cout << "Value: " << heading << std::endl;
     }
 
+    hullCalc.calculate(3);
+
     return 0;
 }
