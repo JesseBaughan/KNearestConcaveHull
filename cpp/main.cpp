@@ -20,6 +20,12 @@ int main()
     std::vector<uint32_t> knn = hullCalc.getKNearest(index);
 
     std::vector<double> headings = hullCalc.calculateHeadings(index, knn, 270.0l);
+    Clustering::NegateArray<double>(headings);
+
+    for(const auto& heading : headings)
+    {
+        std::cout << "Value: " << heading << std::endl;
+    }
 
     return 0;
 }

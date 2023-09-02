@@ -32,6 +32,15 @@ namespace Clustering
         , Lon(0) {}
     };
 
+   template<typename T>
+   void NegateArray(std::vector<T>& inputVector)
+   {
+        for(int i = 0; i < inputVector.size(); i++)
+        {
+            inputVector[i] = inputVector[i] * -1;
+        }
+   }
+
     class KmeansConcaveHull
     {
     public:
@@ -41,9 +50,9 @@ namespace Clustering
         KmeansConcaveHull(const KmeansConcaveHull&) = delete;
         KmeansConcaveHull& operator = (const KmeansConcaveHull&) = delete;
 
-        std::vector<std::vector<double>> calculate(const std::vector<std::vector<double>>& points, size_t k = 0);
+        std::vector<std::vector<double>> calculate(size_t k);
 
-        std::vector<std::vector<double>> KmeansConcaveHull::iterativeCalculate();
+        //std::vector<std::vector<double>> KmeansConcaveHull::iterativeCalculate();
 
         // These are temporarily public whilst we perform testing
         std::vector<bool> get_mask()    const { return _mask; }
@@ -53,6 +62,11 @@ namespace Clustering
         std::vector<double> calculateHeadings(uint32_t currentPointIndex, 
                                              const std::vector<uint32_t>& searchPoints, 
                                              double ref_heading=0.0l);
+
+        template<typename T>
+        void NegateArray(std::vector<T>& inputVector);
+
+
     private:
         const std::array<double, 18> _prime_k = {3,  7, 13, 19, 29, 37,
                                                43, 53, 61, 71, 79, 89,

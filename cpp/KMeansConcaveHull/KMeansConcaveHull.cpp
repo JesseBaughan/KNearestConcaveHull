@@ -49,6 +49,7 @@ namespace Clustering
                 });
     }
 
+    /*
     std::vector<std::vector<double>> KmeansConcaveHull::iterativeCalculate()
     {
         //Check our data
@@ -170,9 +171,11 @@ namespace Clustering
 
         return hull;
     }
-
+    */
+    
     std::vector<std::vector<double>> KmeansConcaveHull::calculate(size_t k)
     {
+        /*
         if (_data_set.size() <= 3)
         {
             std::cout << "Skipped hull calc <= 3 points" << std::endl;
@@ -207,12 +210,15 @@ namespace Clustering
 
             std::vector<double> angles = calculateHeadings(current_point, knn, prev_angle);
 
-            std::vector<uint32_t> candidates = np.argsort(-angles);
+            //TODO: why do we negate the array here?
+            NegateArray(angles);
+            std::vector<uint32_t> candidates = argsort<double>(angles);
 
             uint32_t i = 0;
             bool invalid_hull = true;
             uint32_t candidate = candidates[i++];
 
+            /*
             while (invalid_hull && (i < candidates.size()))
             {
                 uint32_t candidate = candidates[i];
@@ -267,6 +273,7 @@ namespace Clustering
             // TODO: need to write this or implement iterative approach.
             return recurseCalculate();
         }
+        */
 
         std::vector<std::vector<double>> poo(5);
         return poo;
