@@ -56,6 +56,7 @@ namespace Clustering
     };
 
     pdd lineLineIntersection(pdd A, pdd B, pdd C, pdd D);
+    bool Intersects(pdd intersectPoint, pdd A, pdd B);
 
     class KmeansConcaveHull
     {

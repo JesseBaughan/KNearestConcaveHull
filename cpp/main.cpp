@@ -27,12 +27,12 @@ int main()
         std::cout << "Value: " << heading << std::endl;
     }
 
-    hullCalc.calculate(3);
+    //hullCalc.calculate(3);
 
-	Clustering::pdd A(1, 1);
-	Clustering::pdd B(4, 4);
-	Clustering::pdd C(1, 7);
-	Clustering::pdd D(3, 4);
+	Clustering::pdd A(0, 1);
+	Clustering::pdd B(2, 1);
+	Clustering::pdd C(0, 3);
+	Clustering::pdd D(1, 0);
     Clustering::pdd intersectPoint = Clustering::lineLineIntersection(A, B, C, D);
 
 	if (intersectPoint.first == FLT_MAX &&
@@ -47,7 +47,20 @@ int main()
 		// of line segments. Here, we have considered AB
 		// and CD as lines
 		std::cout << "The intersection of the given lines AB "
-				"and CD is: ";
+				"and CD is: " << intersectPoint.first << ",  " << intersectPoint.second << std::endl;
+        bool intersectsFirstLine = Clustering::Intersects(intersectPoint, A, B);
+        bool intersectsSecondLine = Clustering::Intersects(intersectPoint, C, D);
+
+        if(intersectsFirstLine && intersectsSecondLine)
+        {
+            std::cout << "Intersects";
+        }
+        else
+        {
+
+            std::cout << "Does not intersect";
+        }
+
 	}
 
     return 0;

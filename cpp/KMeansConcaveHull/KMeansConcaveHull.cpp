@@ -195,14 +195,14 @@ namespace Clustering
         // Line AB represented as a1x + b1y = c1
         double a1 = B.second - A.second;
         double b1 = A.first - B.first;
-        double c1 = a1*(A.first) + b1*(A.second);
+        double c1 = a1 * (A.first) + b1 * (A.second);
     
         // Line CD represented as a2x + b2y = c2
         double a2 = D.second - C.second;
         double b2 = C.first - D.first;
-        double c2 = a2*(C.first)+ b2*(C.second);
+        double c2 = a2 * (C.first)+ b2 * (C.second);
     
-        double determinant = a1*b2 - a2*b1;
+        double determinant = a1 * b2 - a2 * b1;
     
         if (determinant == 0)
         {
@@ -216,6 +216,17 @@ namespace Clustering
             double y = (a1 * c2 - a2 * c1) / determinant;
             return pdd(x, y);
         }
+    }
+
+    bool Intersects(pdd intersectPoint, pdd A, pdd B)
+    {
+        bool xPointOnLine = (intersectPoint.first >= fmin(A.first, B.first)) && 
+                            (intersectPoint.first <= fmax(A.first, B.first));
+
+        bool yPointOnLine = (intersectPoint.second >= fmin(A.second, B.second)) && 
+                            (intersectPoint.second <= fmax(A.second, B.second));
+
+        return yPointOnLine && xPointOnLine;
     }
 
     /*
