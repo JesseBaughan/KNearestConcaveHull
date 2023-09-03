@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "KMeansConcaveHull/KMeansConcaveHull.hpp" 
+#include "LineIntersect.hpp"
 
 
 int main()
@@ -29,39 +30,21 @@ int main()
 
     //hullCalc.calculate(3);
 
-	Clustering::pdd A(0, 1);
-	Clustering::pdd B(2, 1);
-	Clustering::pdd C(0, 3);
-	Clustering::pdd D(1, 0);
-    Clustering::pdd intersectPoint = Clustering::lineLineIntersection(A, B, C, D);
+	Point A(0, 1);
+	Point B(2, 1);
+	Point C(0, 3);
+	Point D(1, 0);
 
-	if (intersectPoint.first == FLT_MAX &&
-		intersectPoint.second==FLT_MAX)
-	{
-		std::cout << "The given lines AB and CD are parallel.\n";
-	}
+    bool intersects = LineLineIntersection(A, B, C, D);
+    if(intersects)
+    {
+        std::cout << "Intersects";
+    }
+    else
+    {
 
-	else
-	{
-		// NOTE: Further check can be applied in case
-		// of line segments. Here, we have considered AB
-		// and CD as lines
-		std::cout << "The intersection of the given lines AB "
-				"and CD is: " << intersectPoint.first << ",  " << intersectPoint.second << std::endl;
-        bool intersectsFirstLine = Clustering::Intersects(intersectPoint, A, B);
-        bool intersectsSecondLine = Clustering::Intersects(intersectPoint, C, D);
-
-        if(intersectsFirstLine && intersectsSecondLine)
-        {
-            std::cout << "Intersects";
-        }
-        else
-        {
-
-            std::cout << "Does not intersect";
-        }
-
-	}
+        std::cout << "Does not intersect";
+    }
 
     return 0;
 }

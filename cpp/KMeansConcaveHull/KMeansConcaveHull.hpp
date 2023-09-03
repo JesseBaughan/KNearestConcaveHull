@@ -16,8 +16,6 @@
 #include <vector>
 #include <array>
 
-#define FLT_MAX 99999
-
 namespace Clustering
 {
     struct lat_lon_coord
@@ -42,21 +40,6 @@ namespace Clustering
             inputVector[i] = inputVector[i] * -1;
         }
    }
-
-    // This pair is used to store the X and Y
-    // coordinates of a point respectively
-    struct pdd 
-    {
-        double first;
-        double second;
-
-        pdd(double _first, double _second)
-            : first(_first)
-            , second(_second) {}
-    };
-
-    pdd lineLineIntersection(pdd A, pdd B, pdd C, pdd D);
-    bool Intersects(pdd intersectPoint, pdd A, pdd B);
 
     class KmeansConcaveHull
     {
