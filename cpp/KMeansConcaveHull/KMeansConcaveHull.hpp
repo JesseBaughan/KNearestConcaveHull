@@ -16,6 +16,8 @@
 #include <vector>
 #include <array>
 
+using namespace std;
+
 namespace Clustering
 {
     struct lat_lon_coord
@@ -33,7 +35,7 @@ namespace Clustering
     };
 
    template<typename T>
-   void NegateArray(std::vector<T>& inputVector)
+   void NegateArray(vector<T>& inputVector)
    {
         for(int i = 0; i < inputVector.size(); i++)
         {
@@ -44,39 +46,39 @@ namespace Clustering
     class KmeansConcaveHull
     {
     public:
-        KmeansConcaveHull(const std::vector<double>& lat, const std::vector<double>& lon);
+        KmeansConcaveHull(const vector<double>& lat, const vector<double>& lon);
         ~KmeansConcaveHull() {};
 
         KmeansConcaveHull(const KmeansConcaveHull&) = delete;
         KmeansConcaveHull& operator = (const KmeansConcaveHull&) = delete;
 
-        std::vector<std::vector<double>> calculate(size_t k);
+        vector<vector<double>> calculate(size_t k);
 
-        //std::vector<std::vector<double>> KmeansConcaveHull::iterativeCalculate();
+        //vector<vector<double>> KmeansConcaveHull::iterativeCalculate();
 
         // These are temporarily public whilst we perform testing
-        std::vector<bool> get_mask()    const { return _mask; }
+        vector<bool> get_mask()    const { return _mask; }
         uint32_t getLowestLatitudeIndex();
-        std::vector<uint32_t> getKNearest(uint32_t currentPointIndex, size_t k = 3);
+        vector<uint32_t> getKNearest(uint32_t currentPointIndex, size_t k = 3);
 
-        std::vector<double> calculateHeadings(uint32_t currentPointIndex, 
-                                             const std::vector<uint32_t>& searchPoints, 
+        vector<double> calculateHeadings(uint32_t currentPointIndex, 
+                                             const vector<uint32_t>& searchPoints, 
                                              double ref_heading=0.0l);
 
     private:
-        const std::array<double, 18> _prime_k = {3,  7, 13, 19, 29, 37,
+        const array<double, 18> _prime_k = {3,  7, 13, 19, 29, 37,
                                                43, 53, 61, 71, 79, 89,
                                                97, 101, 107, 113, 131, 139};
-        std::vector<lat_lon_coord> _data_set;
-        std::vector<double> _lat;
-        std::vector<double> _lon;
-        std::vector<bool> _mask;
+        vector<lat_lon_coord> _data_set;
+        vector<double> _lat;
+        vector<double> _lon;
+        vector<bool> _mask;
 
         uint32_t _prime_ix{0};
         size_t _k{3};
 
-        std::vector<double> calculateDistances(lat_lon_coord currentPoint, 
-                                              const std::vector<lat_lon_coord>& kNearestPoints);
+        vector<double> calculateDistances(lat_lon_coord currentPoint, 
+                                              const vector<lat_lon_coord>& kNearestPoints);
 
         double haversineDistance(lat_lon_coord first, lat_lon_coord second);
 
@@ -84,21 +86,21 @@ namespace Clustering
 
         double calculateHeading(lat_lon_coord reference, lat_lon_coord target, double ref_heading);
 
-        bool containedCheck(const std::vector<lat_lon_coord>& hull, lat_lon_coord point);
+        bool containedCheck(const vector<lat_lon_coord>& hull, lat_lon_coord point);
 
         // TODO: refacto to NOT use recursion - it is not efficient.
-        void recurseCalculate(const std::vector<lat_lon_coord>& points, uint32_t k = 3);
+        void recurseCalculate(const vector<lat_lon_coord>& points, uint32_t k = 3);
 
-        std::vector<uint32_t> getMaskedIndices(const std::vector<uint32_t>& input_array, 
-                                                                  const std::vector<bool>& mask);
+        vector<uint32_t> getMaskedIndices(const vector<uint32_t>& input_array, 
+                                                                  const vector<bool>& mask);
 
         template<typename T>
-        std::vector<uint32_t> argsort(const std::vector<T> &array);
+        vector<uint32_t> argsort(const vector<T> &array);
 
         template<typename Type>
-        std::vector<Type> arraySubset(const std::vector<Type>& input_array, const std::vector<uint32_t>& indexes)
+        vector<Type> arraySubset(const vector<Type>& input_array, const vector<uint32_t>& indexes)
         {
-            std::vector<Type> output_array;
+            vector<Type> output_array;
             output_array.reserve(indexes.size());
             for(int i = 0; i < indexes.size(); i++)
             {
@@ -108,7 +110,7 @@ namespace Clustering
             return output_array;
         }
 
-        std::vector<double> getLats(std::vector<lat_lon_coord>& coords);
+        vector<double> getLats(vector<lat_lon_coord>& coords);
     };
 }
 

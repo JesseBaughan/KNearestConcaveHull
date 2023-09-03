@@ -33,7 +33,7 @@ namespace Clustering
         return radians * (180.0 / M_PI);
     }
 
-    KmeansConcaveHull::KmeansConcaveHull(const std::vector<double>& lat, const std::vector<double>& lon)
+    KmeansConcaveHull::KmeansConcaveHull(const vector<double>& lat, const vector<double>& lon)
         : _lat(lat)
         , _lon(lon)
         , _mask(_lat.size(), true)
@@ -43,7 +43,7 @@ namespace Clustering
         {
             _data_set.push_back(lat_lon_coord(lat[i], lon[i]));
         }
-        std::sort(_data_set.begin(), _data_set.end(),
+        sort(_data_set.begin(), _data_set.end(),
                 [](const lat_lon_coord& left, const lat_lon_coord& right) -> bool {
                     // sort indices according to corresponding array element
                     return left.Lon < right.Lon;
@@ -51,7 +51,7 @@ namespace Clustering
     }
 
     /*
-    std::vector<std::vector<double>> KmeansConcaveHull::iterativeCalculate()
+    vector<vector<double>> KmeansConcaveHull::iterativeCalculate()
     {
         //Check our data
         //TODO: do we want to do data init that we do in constuctor here and 
@@ -60,16 +60,16 @@ namespace Clustering
         // can just pass in data. Also having NO class globals would be preferred.
         if (_data_set.size() <= 3)
         {
-            std::cout << "Skipped hull calc <= 3 points" << std::endl;
+            cout << "Skipped hull calc <= 3 points" << endl;
             //return something?
         }
 
-        std::vector<std::vector<double>> hull;
+        vector<vector<double>> hull;
         hull.reserve(_data_set.size());
 
         for (auto& k: _prime_k)
         {
-            uint32_t k_check = std::min(static_cast<size_t>(k), _data_set.size());
+            uint32_t k_check = min(static_cast<size_t>(k), _data_set.size());
 
             uint32_t first_point = getLowestLatitudeIndex();
             uint32_t current_point = first_point;
@@ -96,11 +96,11 @@ namespace Clustering
                     _mask[first_point] = true;
                 }
                 
-                std::vector<uint32_t> knn = getKNearest(current_point, k_check);
+                vector<uint32_t> knn = getKNearest(current_point, k_check);
 
-                std::vector<double> angles = calculateHeadings(current_point, knn, prev_angle);
+                vector<double> angles = calculateHeadings(current_point, knn, prev_angle);
 
-                std::vector<uint32_t> candidates = np.argsort(-angles);
+                vector<uint32_t> candidates = np.argsort(-angles);
 
                 uint32_t i = 0;
                 bool invalid_hull = true;
@@ -126,7 +126,7 @@ namespace Clustering
                     break;
                 }
 
-                std::vector<double> prev_angle = calculateHeadings(knn[candidate], np.array([current_point]));
+                vector<double> prev_angle = calculateHeadings(knn[candidate], np.array([current_point]));
                 uint32_t current_point = knn[candidate];
                 // Work out how to store this data.
                 hull = test_hull;
@@ -174,7 +174,7 @@ namespace Clustering
     }
     */
     
-    uint32_t NumTrueBools(const std::vector<bool>& boolVector)
+    uint32_t NumTrueBools(const vector<bool>& boolVector)
     {
         uint32_t numTrueBools = 0;
 
@@ -190,15 +190,15 @@ namespace Clustering
         return numTrueBools;
     }
 
-    std::vector<std::vector<double>> KmeansConcaveHull::calculate(size_t k)
+    vector<vector<double>> KmeansConcaveHull::calculate(size_t k)
     {
         if (_data_set.size() <= 3)
         {
-            std::cout << "Skipped hull calc <= 3 points" << std::endl;
+            cout << "Skipped hull calc <= 3 points" << endl;
             //return something?
         }
         
-        uint32_t k_check = std::min(k, _data_set.size());
+        uint32_t k_check = min(k, _data_set.size());
 
         uint32_t first_point = getLowestLatitudeIndex();
         uint32_t current_point = first_point;
@@ -206,9 +206,9 @@ namespace Clustering
         // This needs fixing and working out how to do in c++
         //hull = np.reshape(np.array(self.data_set[first_point, :]), (1, 2))
         //test_hull = hull;
-        std::vector<lat_lon_coord> hull; 
+        vector<lat_lon_coord> hull; 
         hull.push_back(_data_set[first_point]);
-        std::vector<lat_lon_coord> test_hull = hull;
+        vector<lat_lon_coord> test_hull = hull;
 
         _mask[first_point] = false;
 
@@ -224,13 +224,13 @@ namespace Clustering
                 _mask[first_point] = true;
             }
             
-            std::vector<uint32_t> knn = getKNearest(current_point, k_check);
+            vector<uint32_t> knn = getKNearest(current_point, k_check);
 
-            std::vector<double> angles = calculateHeadings(current_point, knn, prev_angle);
+            vector<double> angles = calculateHeadings(current_point, knn, prev_angle);
 
             //TODO: why do we negate the array here?
             NegateArray<double>(angles);
-            std::vector<uint32_t> candidates = argsort<double>(angles);
+            vector<uint32_t> candidates = argsort<double>(angles);
 
             uint32_t i = 0;
             bool invalid_hull = true;
@@ -259,7 +259,7 @@ namespace Clustering
                 return recurseCalculate();
             }
 
-            std::vector<double> prev_angle = calculateHeadings(knn[candidate], np.array([current_point]));
+            vector<double> prev_angle = calculateHeadings(knn[candidate], np.array([current_point]));
             uint32_t current_point = knn[candidate];
             // Work out how to store this data.
             hull = test_hull;
@@ -296,7 +296,7 @@ namespace Clustering
         }
         */
 
-        std::vector<std::vector<double>> poo(5);
+        vector<vector<double>> poo(5);
         return poo;
     }
 
@@ -320,9 +320,9 @@ namespace Clustering
         return d;
     }
 
-    std::vector<double> KmeansConcaveHull::calculateDistances(lat_lon_coord currentPoint, const std::vector<lat_lon_coord>& kNearestPoints)
+    vector<double> KmeansConcaveHull::calculateDistances(lat_lon_coord currentPoint, const vector<lat_lon_coord>& kNearestPoints)
     {
-        std::vector<double> distances;
+        vector<double> distances;
         distances.reserve(kNearestPoints.size());
         for(int i = 0; i < kNearestPoints.size(); i++)
         {
@@ -332,9 +332,9 @@ namespace Clustering
         return distances;
     }
 
-    std::vector<double> KmeansConcaveHull::getLats(std::vector<lat_lon_coord>& coords)
+    vector<double> KmeansConcaveHull::getLats(vector<lat_lon_coord>& coords)
     {
-        std::vector<double> lats;
+        vector<double> lats;
         lats.reserve(coords.size());
         for(auto& coord: coords)
         {
@@ -346,15 +346,15 @@ namespace Clustering
 
     uint32_t KmeansConcaveHull::getLowestLatitudeIndex()
     {
-        std::vector<double> temp_lats = getLats(_data_set);
-        std::vector<double>::iterator it = std::min_element(std::begin(temp_lats), std::end(temp_lats));
-        uint32_t index = std::distance(std::begin(temp_lats), it);
+        vector<double> temp_lats = getLats(_data_set);
+        vector<double>::iterator it = min_element(begin(temp_lats), end(temp_lats));
+        uint32_t index = distance(begin(temp_lats), it);
         return index;
     }
 
-    std::vector<uint32_t> KmeansConcaveHull::getMaskedIndices(const std::vector<uint32_t>& input_array, const std::vector<bool>& mask)
+    vector<uint32_t> KmeansConcaveHull::getMaskedIndices(const vector<uint32_t>& input_array, const vector<bool>& mask)
     {
-        std::vector<uint32_t> masked_array;
+        vector<uint32_t> masked_array;
         masked_array.reserve(input_array.size());
         for(int i = 0; i < input_array.size(); i++)
         {
@@ -368,32 +368,32 @@ namespace Clustering
     }
 
     // Returns a range from 0 to size
-    std::vector<uint32_t> range(size_t size)
+    vector<uint32_t> range(size_t size)
     {
-        std::vector<uint32_t> output_array(size, 0);
-        std::iota(output_array.begin(), output_array.end(), 0);
+        vector<uint32_t> output_array(size, 0);
+        iota(output_array.begin(), output_array.end(), 0);
         return output_array;
     }
 
-    std::vector<uint32_t> KmeansConcaveHull::getKNearest(uint32_t currentPointIndex, size_t k)
+    vector<uint32_t> KmeansConcaveHull::getKNearest(uint32_t currentPointIndex, size_t k)
     {
         // Harcoded for testing purposes.
         _mask[1] = false;
-        std::vector<uint32_t> base_indices = getMaskedIndices(range(_mask.size()), _mask);
+        vector<uint32_t> base_indices = getMaskedIndices(range(_mask.size()), _mask);
 
-        std::vector<lat_lon_coord> masked_data_set = arraySubset<lat_lon_coord>(_data_set, base_indices);
+        vector<lat_lon_coord> masked_data_set = arraySubset<lat_lon_coord>(_data_set, base_indices);
 
-        std::vector<double> distances = calculateDistances(_data_set[currentPointIndex], masked_data_set);
+        vector<double> distances = calculateDistances(_data_set[currentPointIndex], masked_data_set);
 
         //Sort the distances array in non-decending order
-        std::vector<uint32_t> sorted_indices = argsort(distances);
+        vector<uint32_t> sorted_indices = argsort(distances);
 
         //Get the index of the lowest K points
-        size_t k_check = std::min(_k, sorted_indices.size());
+        size_t k_check = min(_k, sorted_indices.size());
         sorted_indices.resize(k_check);
 
         //Set the index of the lowest K points to True, rest are false
-        std::vector<uint32_t> kNearest = arraySubset<uint32_t>(base_indices, sorted_indices);
+        vector<uint32_t> kNearest = arraySubset<uint32_t>(base_indices, sorted_indices);
         
         return kNearest;
     }
@@ -405,10 +405,10 @@ namespace Clustering
      * @return indices w.r.t sorted array
      */
     template<typename T>
-    std::vector<uint32_t> KmeansConcaveHull::argsort(const std::vector<T> &array) {
-        std::vector<uint32_t> indices(array.size());
-        std::iota(indices.begin(), indices.end(), 0);
-        std::sort(indices.begin(), indices.end(),
+    vector<uint32_t> KmeansConcaveHull::argsort(const vector<T> &array) {
+        vector<uint32_t> indices(array.size());
+        iota(indices.begin(), indices.end(), 0);
+        sort(indices.begin(), indices.end(),
                 [&array](int left, int right) -> bool {
                     // sort indices according to corresponding array element
                     return array[left] < array[right];
@@ -448,7 +448,7 @@ namespace Clustering
         float x = cos(referencePointLat_rads) * sin(targetPointLat_rads) - sin(referencePointLat_rads) *
                 cos(targetPointLat_rads) * cos(lon_dif);
 
-        float bearing = std::fmod((degrees(atan2(y, x)) + 360.0l), 360.0l) - ref_heading;
+        float bearing = fmod((degrees(atan2(y, x)) + 360.0l), 360.0l) - ref_heading;
 
         if(bearing < 0.0l)
         {
@@ -457,15 +457,15 @@ namespace Clustering
         return bearing;
     }
 
-    std::vector<double> KmeansConcaveHull::calculateHeadings(uint32_t currentPointIndex, 
-                                                            const std::vector<uint32_t>& searchPointsIndicies, 
+    vector<double> KmeansConcaveHull::calculateHeadings(uint32_t currentPointIndex, 
+                                                            const vector<uint32_t>& searchPointsIndicies, 
                                                             double ref_heading)
     {
         // Get the subset of points we are calculating heading to 
-        std::vector<lat_lon_coord> searchPoints = arraySubset(_data_set, searchPointsIndicies);
+        vector<lat_lon_coord> searchPoints = arraySubset(_data_set, searchPointsIndicies);
         lat_lon_coord currentPoint = _data_set[currentPointIndex];
 
-        std::vector<double> headings;
+        vector<double> headings;
         headings.reserve(searchPoints.size());
         for(int i = 0; i < searchPoints.size(); i++)
         {
@@ -476,7 +476,7 @@ namespace Clustering
         return headings;
     }
 
-    bool containedCheck(const std::vector<lat_lon_coord>& hull, lat_lon_coord point)
+    bool containedCheck(const vector<lat_lon_coord>& hull, lat_lon_coord point)
     {
         return true;
     }
