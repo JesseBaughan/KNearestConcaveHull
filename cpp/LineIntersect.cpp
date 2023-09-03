@@ -6,7 +6,7 @@
 #define FLT_MAX 999999
 
 /*
-bool LineIntersects(const std::vector<lat_lon_coord>& points)
+bool LineIntersects(const vector<lat_lon_coord>& points)
 {
     for(int i = 0; i < points.size() - 1; i++)
     {
