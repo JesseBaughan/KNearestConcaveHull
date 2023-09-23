@@ -15,7 +15,7 @@ int main()
 
     Clustering::KmeansConcaveHull hullCalc(lat, lon);
 
-    uint32_t index = hullCalc.getLowestLatitudeIndex();
+    uint32_t index = hullCalc.getLowestLatitudeIndex(hullCalc._data_set);
 
     vector<uint32_t> knn = hullCalc.getKNearest(index);
 
@@ -27,14 +27,14 @@ int main()
         cout << "Value: " << heading << endl;
     }
 
-    //hullCalc.calculate(3);
+    hullCalc.calculate(hullCalc._data_set, 3);
 
 	Point A(0, 1);
 	Point B(2, 1);
 	Point C(0, 3);
 	Point D(1, 0);
 
-    bool intersects = LineLineIntersection(A, B, C, D);
+    bool intersects = lineLineIntersection(A, B, C, D);
     if(intersects)
     {
         cout << "Intersects";

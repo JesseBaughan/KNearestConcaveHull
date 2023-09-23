@@ -52,24 +52,27 @@ namespace Clustering
         KmeansConcaveHull(const KmeansConcaveHull&) = delete;
         KmeansConcaveHull& operator = (const KmeansConcaveHull&) = delete;
 
-        vector<vector<double>> calculate(size_t k);
+        vector<lat_lon_coord> calculate(vector<lat_lon_coord>& points, size_t k);
 
         //vector<vector<double>> KmeansConcaveHull::iterativeCalculate();
 
         // These are temporarily public whilst we perform testing
         vector<bool> get_mask()    const { return _mask; }
-        uint32_t getLowestLatitudeIndex();
+        uint32_t getLowestLatitudeIndex(vector<lat_lon_coord>& points);
         vector<uint32_t> getKNearest(uint32_t currentPointIndex, size_t k = 3);
 
         vector<double> calculateHeadings(uint32_t currentPointIndex, 
                                              const vector<uint32_t>& searchPoints, 
                                              double ref_heading=0.0l);
 
-    private:
-        const array<double, 18> _prime_k = {3,  7, 13, 19, 29, 37,
-                                               43, 53, 61, 71, 79, 89,
-                                               97, 101, 107, 113, 131, 139};
+        // Public for development purposes
         vector<lat_lon_coord> _data_set;
+    private:
+        const array<int, 18> _prime_k = {3,  7, 13, 19, 29, 37,
+                                         43, 53, 61, 71, 79, 89,
+                                         97, 101, 107, 113, 131, 139};
+        size_t _current_prime_index{0};
+
         vector<double> _lat;
         vector<double> _lon;
         vector<bool> _mask;
@@ -82,14 +85,14 @@ namespace Clustering
 
         double haversineDistance(lat_lon_coord first, lat_lon_coord second);
 
-        double getNextK();
+        int getNextK();
 
         double calculateHeading(lat_lon_coord reference, lat_lon_coord target, double ref_heading);
 
         bool containedCheck(const vector<lat_lon_coord>& hull, lat_lon_coord point);
 
         // TODO: refacto to NOT use recursion - it is not efficient.
-        void recurseCalculate(const vector<lat_lon_coord>& points, uint32_t k = 3);
+        vector<lat_lon_coord> recurseCalculate(vector<lat_lon_coord>& points, uint32_t k = 3);
 
         vector<uint32_t> getMaskedIndices(const vector<uint32_t>& input_array, 
                                                                   const vector<bool>& mask);

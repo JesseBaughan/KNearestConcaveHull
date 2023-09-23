@@ -21,4 +21,4 @@ struct Point
         , second(_second) {}
 };
 
-bool LineLineIntersection(Point A, Point B, Point C, Point D);
+bool lineLineIntersection(Point A, Point B, Point C, Point D);

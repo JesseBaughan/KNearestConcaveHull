@@ -5,32 +5,6 @@
 
 #define FLT_MAX 999999
 
-/*
-bool LineIntersects(const vector<lat_lon_coord>& points)
-{
-    for(int i = 0; i < points.size() - 1; i++)
-    {
-        Point lineOneFirstPoint(points[i].Lat, points[i].Lon);
-        Point lineOneSecondPoint(points[i + 1].Lat, points[i + 1].Lon);
-        for(int j = 0; j < points.size() - 1; j++)
-        {
-            if(i == j)
-            {
-                continue;
-            }
-            else
-            {
-                Point lineTwoFirstPoint(points[j].Lat, points[j].Lon);
-                Point lineTwoSecondPoint(points[j + 1].Lat, points[j + 1].Lon);
-                Point intersectPoint = lineLineIntersection(lineOneFirstPoint, lineOneSecondPoint, 
-                                                            lineTwoFirstPoint, lineTwoSecondPoint);
-            }
-        }
-    }
-}
-
-*/
-
 bool PointLiesOnLine(Point intersectPoint, Point A, Point B)
 {
     bool xPointOnLine = (intersectPoint.first >= fmin(A.first, B.first)) && 
@@ -42,7 +16,7 @@ bool PointLiesOnLine(Point intersectPoint, Point A, Point B)
     return xPointOnLine && yPointOnLine;
 }
 
-bool LineLineIntersection(Point A, Point B, Point C, Point D)
+bool lineLineIntersection(Point A, Point B, Point C, Point D)
 {
     // Line AB represented as a1x + b1y = c1
     double a1 = B.second - A.second;
