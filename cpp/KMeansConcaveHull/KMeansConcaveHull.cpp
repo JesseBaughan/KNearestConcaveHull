@@ -276,7 +276,7 @@ vector<lat_lon_coord> KmeansConcaveHull::calculate(vector<lat_lon_coord>& _point
             //uint32_t next_point = np.reshape(self.data_set[knn[candidate]], (1,2));
             lat_lon_coord next_point = _points[knn[candidate]];
 
-            //test_hull = np.append(hull, next_point, axis=0);
+            test_hull = hull;
             test_hull.push_back(next_point);
 
             // How the heck are we going to work out if there is a collision of two lines??
@@ -433,7 +433,7 @@ vector<uint32_t> range(size_t size)
 vector<uint32_t> KmeansConcaveHull::getKNearest(uint32_t currentPointIndex, size_t k)
 {
     // Harcoded for testing purposes.
-    _mask[1] = false;
+    //_mask[1] = false;
     vector<uint32_t> base_indices = getMaskedIndices(range(_mask.size()), _mask);
 
     vector<lat_lon_coord> masked_data_set = arraySubset<lat_lon_coord>(_data_set, base_indices);
