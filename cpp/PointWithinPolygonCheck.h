@@ -4,4 +4,4 @@
 
 using namespace std;
 
-bool pointLiesWithinPolygon(vector<lat_lon_coord>& polygon, lat_lon_coord point);
+int pointLiesWithinPolygon(vector<lat_lon_coord>& points, float testx, float testy);

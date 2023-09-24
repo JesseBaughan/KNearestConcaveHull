@@ -305,8 +305,7 @@ vector<lat_lon_coord> KmeansConcaveHull::calculate(vector<lat_lon_coord>& _point
 
     for (int index = 0; index < total; index++)
     {
-        // TODO: We are going to have to write a contained check.
-        if (pointLiesWithinPolygon(hull, _points[index]))
+        if (pointLiesWithinPolygon(hull, _points[index].Lat, _points[index].Lon))
         {
             count += 1;
         }
