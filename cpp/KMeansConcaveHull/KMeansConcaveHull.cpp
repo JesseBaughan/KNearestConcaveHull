@@ -21,6 +21,7 @@
 
 #include "KMeansConcaveHull.hpp"
 #include "../LineIntersect.hpp"
+#include "../PointWithinPolygonCheck.h"
 
 namespace Clustering
 {
@@ -299,14 +300,13 @@ vector<lat_lon_coord> KmeansConcaveHull::calculate(vector<lat_lon_coord>& _point
         step += 1;
     }
     
-    /*
     uint32_t count = 0;
     size_t total = _points.size();
 
-    for (int ix = 0; ix < total; ix++)
+    for (int index = 0; index < total; index++)
     {
         // TODO: We are going to have to write a contained check.
-        if (__contained_check(hull, self.data_set[ix, :]))
+        if (pointLiesWithinPolygon(hull, _points[index]))
         {
             count += 1;
         }
@@ -318,15 +318,15 @@ vector<lat_lon_coord> KmeansConcaveHull::calculate(vector<lat_lon_coord>& _point
     
     if (count == total)
     {
-        hull = np.append(hull, [hull[0]], axis=0);
+        //hull = np.append(hull, [hull[0]], axis=0);
+        //TODO: confirm this operation matches python.
+        hull.push_back(hull[0]);
         return hull;
     }
     else
     {
-        // TODO: need to write this or implement iterative approach.
-        return recurseCalculate();
+        return recurseCalculate(_points);
     }
-    */
 
     vector<lat_lon_coord> poo(5);
     return poo;
