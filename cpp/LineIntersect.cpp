@@ -7,11 +7,11 @@
 
 bool PointLiesOnLine(Point intersectPoint, Point A, Point B)
 {
-    bool xPointOnLine = (intersectPoint.first >= fmin(A.first, B.first)) && 
-                        (intersectPoint.first <= fmax(A.first, B.first));
+    bool xPointOnLine = (intersectPoint.first > fmin(A.first, B.first)) && 
+                        (intersectPoint.first < fmax(A.first, B.first));
 
-    bool yPointOnLine = (intersectPoint.second >= fmin(A.second, B.second)) && 
-                        (intersectPoint.second <= fmax(A.second, B.second));
+    bool yPointOnLine = (intersectPoint.second > fmin(A.second, B.second)) && 
+                        (intersectPoint.second < fmax(A.second, B.second));
 
     return xPointOnLine && yPointOnLine;
 }
