@@ -36,18 +36,19 @@ namespace Clustering
     {
     public:
         KmeansConcaveHull(const vector<double>& lat, const vector<double>& lon);
+        explicit KmeansConcaveHull(const vector<lat_lon_coord>& dataset);
         ~KmeansConcaveHull() {};
 
         KmeansConcaveHull(const KmeansConcaveHull&) = delete;
         KmeansConcaveHull& operator = (const KmeansConcaveHull&) = delete;
 
-        vector<lat_lon_coord> calculate(vector<lat_lon_coord>& points, size_t k);
+        vector<lat_lon_coord> calculate(const vector<lat_lon_coord>& points, size_t k);
 
         //vector<vector<double>> KmeansConcaveHull::iterativeCalculate();
 
         // These are temporarily public whilst we perform testing
         vector<bool> get_mask()    const { return _mask; }
-        uint32_t getLowestLatitudeIndex(vector<lat_lon_coord>& points);
+        uint32_t getLowestLatitudeIndex(const vector<lat_lon_coord>& points);
         vector<uint32_t> getKNearest(uint32_t currentPointIndex, size_t k = 3);
 
         vector<double> calculateHeadings(uint32_t currentPointIndex, 
@@ -56,14 +57,13 @@ namespace Clustering
 
         // Public for development purposes
         vector<lat_lon_coord> _data_set;
+
     private:
         const array<int, 18> _prime_k = {3,  7, 13, 19, 29, 37,
                                          43, 53, 61, 71, 79, 89,
                                          97, 101, 107, 113, 131, 139};
         size_t _current_prime_index{0};
 
-        vector<double> _lat;
-        vector<double> _lon;
         vector<bool> _mask;
 
         uint32_t _prime_ix{0};
@@ -81,7 +81,7 @@ namespace Clustering
         bool containedCheck(const vector<lat_lon_coord>& hull, lat_lon_coord point);
 
         // TODO: refacto to NOT use recursion - it is not efficient.
-        vector<lat_lon_coord> recurseCalculate(vector<lat_lon_coord>& points, uint32_t k = 3);
+        vector<lat_lon_coord> recurseCalculate(const vector<lat_lon_coord>& points, uint32_t k = 3);
 
         vector<uint32_t> getMaskedIndices(const vector<uint32_t>& input_array, 
                                                                   const vector<bool>& mask);
@@ -102,7 +102,7 @@ namespace Clustering
             return output_array;
         }
 
-        vector<double> getLats(vector<lat_lon_coord>& coords);
+        vector<double> getLats(const vector<lat_lon_coord>& coords);
     };
 }
 

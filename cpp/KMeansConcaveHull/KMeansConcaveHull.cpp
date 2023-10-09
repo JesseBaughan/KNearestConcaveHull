@@ -37,9 +37,7 @@ static inline double degrees(double radians)
 }
 
 KmeansConcaveHull::KmeansConcaveHull(const vector<double>& lat, const vector<double>& lon)
-    : _lat(lat)
-    , _lon(lon)
-    , _mask(_lat.size(), true)
+    : _mask(lat.size(), true)
 {
     _data_set.reserve(lat.size());
     for(int i = 0; i < lat.size(); i++)
@@ -53,6 +51,11 @@ KmeansConcaveHull::KmeansConcaveHull(const vector<double>& lat, const vector<dou
             });
 }
 
+KmeansConcaveHull::KmeansConcaveHull(const vector<lat_lon_coord>& dataset)
+    : _data_set(dataset)
+    , _mask(dataset.size(), true)
+{
+}
 /*
 vector<vector<double>> KmeansConcaveHull::iterativeCalculate()
 {
@@ -222,7 +225,7 @@ uint32_t NumTrueBools(const vector<bool>& boolVector)
     return numTrueBools;
 }
 
-vector<lat_lon_coord> KmeansConcaveHull::calculate(vector<lat_lon_coord>& _points, size_t k)
+vector<lat_lon_coord> KmeansConcaveHull::calculate(const vector<lat_lon_coord>& _points, size_t k)
 {
     if (_points.size() <= 3)
     {
@@ -317,7 +320,6 @@ vector<lat_lon_coord> KmeansConcaveHull::calculate(vector<lat_lon_coord>& _point
     
     if (count == total)
     {
-        //hull = np.append(hull, [hull[0]], axis=0);
         //TODO: confirm this operation matches python.
         hull.push_back(hull[0]);
         return hull;
@@ -343,7 +345,7 @@ int KmeansConcaveHull::getNextK()
     }
 }
 
-vector<lat_lon_coord> KmeansConcaveHull::recurseCalculate(vector<lat_lon_coord>& points, uint32_t k)
+vector<lat_lon_coord> KmeansConcaveHull::recurseCalculate(const vector<lat_lon_coord>& points, uint32_t k)
 {
     int next_k = getNextK();
     if (next_k == -1)
@@ -352,7 +354,9 @@ vector<lat_lon_coord> KmeansConcaveHull::recurseCalculate(vector<lat_lon_coord>&
         return empty;
     }
 
-    return calculate(points, next_k);
+    Clustering::KmeansConcaveHull hullCalc(points);
+
+    return hullCalc.calculate(points, next_k);
 }
 
 double KmeansConcaveHull::haversineDistance(const lat_lon_coord first, const lat_lon_coord second)
@@ -387,7 +391,7 @@ vector<double> KmeansConcaveHull::calculateDistances(lat_lon_coord currentPoint,
     return distances;
 }
 
-vector<double> KmeansConcaveHull::getLats(vector<lat_lon_coord>& coords)
+vector<double> KmeansConcaveHull::getLats(const vector<lat_lon_coord>& coords)
 {
     vector<double> lats;
     lats.reserve(coords.size());
@@ -399,7 +403,7 @@ vector<double> KmeansConcaveHull::getLats(vector<lat_lon_coord>& coords)
     return lats;
 }
 
-uint32_t KmeansConcaveHull::getLowestLatitudeIndex(vector<lat_lon_coord>& _points)
+uint32_t KmeansConcaveHull::getLowestLatitudeIndex(const vector<lat_lon_coord>& _points)
 {
     vector<double> temp_lats = getLats(_points);
     vector<double>::iterator it = min_element(begin(temp_lats), end(temp_lats));
@@ -444,7 +448,7 @@ vector<uint32_t> KmeansConcaveHull::getKNearest(uint32_t currentPointIndex, size
     vector<uint32_t> sorted_indices = argsort(distances);
 
     //Get the index of the lowest K points
-    size_t k_check = min(_k, sorted_indices.size());
+    size_t k_check = min(k, sorted_indices.size());
     sorted_indices.resize(k_check);
 
     //Set the index of the lowest K points to True, rest are false
