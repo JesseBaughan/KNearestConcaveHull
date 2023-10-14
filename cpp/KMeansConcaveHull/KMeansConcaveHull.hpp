@@ -36,19 +36,19 @@ namespace Clustering
     {
     public:
         KmeansConcaveHull(const vector<double>& lat, const vector<double>& lon);
-        explicit KmeansConcaveHull(const vector<lat_lon_coord>& dataset);
+        explicit KmeansConcaveHull(const vector<Point>& dataset);
         ~KmeansConcaveHull() {};
 
         KmeansConcaveHull(const KmeansConcaveHull&) = delete;
         KmeansConcaveHull& operator = (const KmeansConcaveHull&) = delete;
 
-        vector<lat_lon_coord> calculate(const vector<lat_lon_coord>& points, size_t k);
+        vector<Point> calculate(const vector<Point>& points, size_t k);
 
         //vector<vector<double>> KmeansConcaveHull::iterativeCalculate();
 
         // These are temporarily public whilst we perform testing
         vector<bool> get_mask()    const { return _mask; }
-        uint32_t getLowestLatitudeIndex(const vector<lat_lon_coord>& points);
+        uint32_t getLowestLatitudeIndex(const vector<Point>& points);
         vector<uint32_t> getKNearest(uint32_t currentPointIndex, size_t k = 3);
 
         vector<double> calculateHeadings(uint32_t currentPointIndex, 
@@ -56,7 +56,7 @@ namespace Clustering
                                              double ref_heading=0.0l);
 
         // Public for development purposes
-        vector<lat_lon_coord> _data_set;
+        vector<Point> _data_set;
 
     private:
         const array<int, 18> _prime_k = {3,  7, 13, 19, 29, 37,
@@ -69,19 +69,19 @@ namespace Clustering
         uint32_t _prime_ix{0};
         size_t _k{3};
 
-        vector<double> calculateDistances(lat_lon_coord currentPoint, 
-                                              const vector<lat_lon_coord>& kNearestPoints);
+        vector<double> calculateDistances(Point currentPoint, 
+                                              const vector<Point>& kNearestPoints);
 
-        double haversineDistance(lat_lon_coord first, lat_lon_coord second);
+        double haversineDistance(Point first, Point second);
 
         int getNextK();
 
-        double calculateHeading(lat_lon_coord reference, lat_lon_coord target, double ref_heading);
+        double calculateHeading(Point reference, Point target, double ref_heading);
 
-        bool containedCheck(const vector<lat_lon_coord>& hull, lat_lon_coord point);
+        bool containedCheck(const vector<Point>& hull, Point point);
 
         // TODO: refacto to NOT use recursion - it is not efficient.
-        vector<lat_lon_coord> recurseCalculate(const vector<lat_lon_coord>& points, uint32_t k = 3);
+        vector<Point> recurseCalculate(const vector<Point>& points, uint32_t k = 3);
 
         vector<uint32_t> getMaskedIndices(const vector<uint32_t>& input_array, 
                                                                   const vector<bool>& mask);
@@ -102,7 +102,7 @@ namespace Clustering
             return output_array;
         }
 
-        vector<double> getLats(const vector<lat_lon_coord>& coords);
+        vector<double> getLats(const vector<Point>& coords);
     };
 }
 
