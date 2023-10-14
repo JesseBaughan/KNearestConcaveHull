@@ -308,8 +308,7 @@ vector<Point> KmeansConcaveHull::calculate(const vector<Point>& _points, size_t 
 
     for (int index = 0; index < total; index++)
     {
-        //if (isInside({_points[index].y, _points[index].y}, hull))
-        if (true)
+        if (isInside({_points[index].y, _points[index].y}, hull))
         {
             count += 1;
         }
