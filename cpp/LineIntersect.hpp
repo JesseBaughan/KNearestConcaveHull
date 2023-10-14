@@ -9,16 +9,6 @@
  *
  */
 
-// This pair is used to store the X and Y
-// coordinates of a point respectively
-struct Point 
-{
-    double first;
-    double second;
-
-    Point(double _first, double _second)
-        : first(_first)
-        , second(_second) {}
-};
+#include "Point.h"
 
 bool lineLineIntersection(Point A, Point B, Point C, Point D);

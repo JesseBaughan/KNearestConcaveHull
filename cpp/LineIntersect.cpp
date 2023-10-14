@@ -7,11 +7,11 @@
 
 bool PointLiesOnLine(Point intersectPoint, Point A, Point B)
 {
-    bool xPointOnLine = (intersectPoint.first > fmin(A.first, B.first)) && 
-                        (intersectPoint.first < fmax(A.first, B.first));
+    bool xPointOnLine = (intersectPoint.x > fmin(A.x, B.x)) && 
+                        (intersectPoint.x < fmax(A.x, B.x));
 
-    bool yPointOnLine = (intersectPoint.second > fmin(A.second, B.second)) && 
-                        (intersectPoint.second < fmax(A.second, B.second));
+    bool yPointOnLine = (intersectPoint.y > fmin(A.y, B.y)) && 
+                        (intersectPoint.y < fmax(A.y, B.y));
 
     return xPointOnLine && yPointOnLine;
 }
@@ -19,14 +19,14 @@ bool PointLiesOnLine(Point intersectPoint, Point A, Point B)
 bool lineLineIntersection(Point A, Point B, Point C, Point D)
 {
     // Line AB represented as a1x + b1y = c1
-    double a1 = B.second - A.second;
-    double b1 = A.first - B.first;
-    double c1 = (a1 * A.first) + (b1 * A.second);
+    double a1 = B.y - A.y;
+    double b1 = A.x - B.x;
+    double c1 = (a1 * A.x) + (b1 * A.y);
 
     // Line CD represented as a2x + b2y = c2
-    double a2 = D.second - C.second;
-    double b2 = C.first - D.first;
-    double c2 = (a2 * C.first) + (b2 * C.second);
+    double a2 = D.y - C.y;
+    double b2 = C.x - D.x;
+    double c2 = (a2 * C.x) + (b2 * C.y);
 
     double determinant = (a1 * b2) - (a2 * b1);
 

@@ -21,7 +21,7 @@
 
 #include "KMeansConcaveHull.hpp"
 #include "../LineIntersect.hpp"
-#include "../PointWithinPolygonCheck.h"
+#include "../PointInPolygonCheck.h"
 
 namespace Clustering
 {
@@ -308,7 +308,8 @@ vector<lat_lon_coord> KmeansConcaveHull::calculate(const vector<lat_lon_coord>& 
 
     for (int index = 0; index < total; index++)
     {
-        if (pointLiesWithinPolygon(hull, _points[index].Lat, _points[index].Lon))
+        //if (isInside({_points[index].Lat, _points[index].Lon}, hull))
+        if (true)
         {
             count += 1;
         }

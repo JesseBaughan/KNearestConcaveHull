@@ -16,7 +16,7 @@
 #include <vector>
 #include <array>
 
-#include "../LatLon.h"
+#include "../Point.h"
 
 using namespace std;
 
