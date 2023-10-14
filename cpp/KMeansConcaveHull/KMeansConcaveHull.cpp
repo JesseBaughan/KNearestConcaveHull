@@ -23,6 +23,16 @@
 #include "../LineIntersect.hpp"
 #include "../PointInPolygonCheck.h"
 
+/**
+ * TODO: 
+ * - Look for opportunties to use Modern C++
+ * - Look for opportuntities to use STL 
+ * - Move C++ versions of Python functions into a helper class
+ * - Tidy up directory structure
+ * - Run a profiler and see where primary sources of latency, compare to Python
+ *   then work out what should be prioritised for optimisation.
+* */
+
 namespace Clustering
 {
 
@@ -46,7 +56,6 @@ KmeansConcaveHull::KmeansConcaveHull(const vector<double>& lat, const vector<dou
     }
     sort(_data_set.begin(), _data_set.end(),
             [](const Point& left, const Point& right) -> bool {
-                // sort indices according to corresponding array element
                 return left.x < right.x;
             });
 }
@@ -56,129 +65,6 @@ KmeansConcaveHull::KmeansConcaveHull(const vector<Point>& dataset)
     , _mask(dataset.size(), true)
 {
 }
-/*
-vector<vector<double>> KmeansConcaveHull::iterativeCalculate()
-{
-    //Check our data
-    //TODO: do we want to do data init that we do in constuctor here and 
-    // therefore take the dataset as input to this function?
-    // We could reduce constructing this class over and over if we 
-    // can just pass in data. Also having NO class globals would be preferred.
-    if (_data_set.size() <= 3)
-    {
-        cout << "Skipped hull calc <= 3 points" << endl;
-        //return something?
-    }
-
-    vector<vector<double>> hull;
-    hull.reserve(_data_set.size());
-
-    for (auto& k: _prime_k)
-    {
-        uint32_t k_check = min(static_cast<size_t>(k), _data_set.size());
-
-        uint32_t first_point = getLowestLatitudeIndex();
-        uint32_t current_point = first_point;
-        
-        // This needs fixing and working out how to do in c++
-        hull = np.reshape(np.array(self.data_set[first_point, :]), (1, 2))
-        test_hull = hull;
-
-        _mask[first_point] = false;
-
-        double prev_angle = 270.0l;
-        uint32_t step = 2;
-        uint32_t stop = step + k_check;
-        bool currentKValueFail = false;
-        
-        // Not sure what the self mask [self mask] is doing.
-        //while ((current_point != first_point) or (step == 2)) && (self._mask[self._mask]) > 0:
-        // This is the main logic that is stepping through our dataset and attempting to draw 
-        // a concanve hull. This could probably be abstracted into it's own function.
-        while (((current_point != first_point) or (step == 2)) && (self._mask[self._mask]) > 0)
-        {
-            if (step == stop)
-            {
-                _mask[first_point] = true;
-            }
-            
-            vector<uint32_t> knn = getKNearest(current_point, k_check);
-
-            vector<double> angles = calculateHeadings(current_point, knn, prev_angle);
-
-            vector<uint32_t> candidates = np.argsort(-angles);
-
-            uint32_t i = 0;
-            bool invalid_hull = true;
-            uint32_t candidate = candidates[i++];
-
-            while (invalid_hull && (i < candidates.size()))
-            {
-                uint32_t candidate = candidates[i];
-
-                // All of this stuff needs working out.
-                uint32_t next_point = np.reshape(self.data_set[knn[candidate]], (1,2));
-                test_hull = np.append(hull, next_point, axis=0);
-
-                // How the heck are we going to work out if there is a collision of two lines??
-                line = LineString(test_hull);
-                bool invalid_hull = !line.is_simple;
-                i += 1;
-            }
-
-            if (invalid_hull)
-            {
-                currentKValueFail = true;
-                break;
-            }
-
-            vector<double> prev_angle = calculateHeadings(knn[candidate], np.array([current_point]));
-            uint32_t current_point = knn[candidate];
-            // Work out how to store this data.
-            hull = test_hull;
-            
-            _mask[current_point] = false;
-            step += 1;
-        }
-
-        if(currentKValueFail)
-        {
-            continue;
-        }
-        
-        uint32_t count = 0;
-        size_t total = _data_set.size();
-
-        // Check if all our our data set is within our candidate hull 
-        for (int ix = 0; ix < total; ix++)
-        {
-            // TODO: We are going to have to write a contained check.
-            if (__contained_check(hull, _data_set[ix, :]))
-            {
-                count += 1;
-            }
-            else 
-            {
-                break;
-            }
-        }
-        
-        // If all of our points are within our hull then we can return the hull (success)
-        // Else we need to go and try the process again with a new K value.
-        if (count == total)
-        {
-            hull = np.append(hull, [hull[0]], axis=0);
-            break; //we have found a solution.
-        }
-        else
-        {
-            continue;
-        }
-    }
-
-    return hull;
-}
-*/
 
 bool lineIntersects(const vector<Point>& points)
 {
@@ -188,7 +74,7 @@ bool lineIntersects(const vector<Point>& points)
         Point lineOneSecondPoint(points[i + 1].x, points[i + 1].y);
         for(int j = 0; j < points.size() - 1; j++)
         {
-            if(i == j) // don't check intersection of point with itself
+            if(i == j) // Don't check intersection of point with itself
             {
                 continue;
             }
@@ -238,9 +124,6 @@ vector<Point> KmeansConcaveHull::calculate(const vector<Point>& _points, size_t 
     uint32_t first_point = getLowestLatitudeIndex(_points);
     uint32_t current_point = first_point;
     
-    // This needs fixing and working out how to do in c++
-    //hull = np.reshape(np.array(self.data_set[first_point, :]), (1, 2))
-    //test_hull = hull;
     vector<Point> hull; 
     hull.push_back(_points[first_point]);
     vector<Point> test_hull = hull;
@@ -251,7 +134,6 @@ vector<Point> KmeansConcaveHull::calculate(const vector<Point>& _points, size_t 
     uint32_t step = 2;
     uint32_t stop = step + k_check;
     
-    //while ((current_point != first_point) or (step == 2)) && (self._mask[self._mask]) > 0:
     while ((((current_point != first_point) || (step == 2)) && NumTrueBools(_mask)) > 0)
     {
         if (step == stop)
@@ -275,14 +157,11 @@ vector<Point> KmeansConcaveHull::calculate(const vector<Point>& _points, size_t 
         {
             candidate = candidates[i];
 
-            // All of this stuff needs working out.
-            //uint32_t next_point = np.reshape(self.data_set[knn[candidate]], (1,2));
             Point next_point = _points[knn[candidate]];
 
             test_hull = hull;
             test_hull.push_back(next_point);
 
-            // How the heck are we going to work out if there is a collision of two lines??
             invalid_hull = lineIntersects(test_hull);
             i += 1;
         }
@@ -321,7 +200,6 @@ vector<Point> KmeansConcaveHull::calculate(const vector<Point>& _points, size_t 
     
     if (count == total)
     {
-        //TODO: confirm this operation matches python.
         hull.push_back(hull[0]);
         return hull;
     }
@@ -426,54 +304,46 @@ vector<uint32_t> KmeansConcaveHull::getMaskedIndices(const vector<uint32_t>& inp
     return masked_array;
 }
 
-// Returns a range from 0 to size
-vector<uint32_t> range(size_t size)
-{
-    vector<uint32_t> output_array(size, 0);
-    iota(output_array.begin(), output_array.end(), 0);
-    return output_array;
-}
-
 vector<uint32_t> KmeansConcaveHull::getKNearest(uint32_t currentPointIndex, size_t k)
 {
-    // Harcoded for testing purposes.
-    //_mask[1] = false;
     vector<uint32_t> base_indices = getMaskedIndices(range(_mask.size()), _mask);
 
+    // TODO: work out why warnings exist.
     vector<Point> masked_data_set = arraySubset<Point>(_data_set, base_indices);
 
     vector<double> distances = calculateDistances(_data_set[currentPointIndex], masked_data_set);
 
-    //Sort the distances array in non-decending order
+    // Sort the distances array in non-decending order
     vector<uint32_t> sorted_indices = argsort(distances);
 
-    //Get the index of the lowest K points
+    // Get the index of the lowest K points
     size_t k_check = min(k, sorted_indices.size());
     sorted_indices.resize(k_check);
 
-    //Set the index of the lowest K points to True, rest are false
+    // Set the index of the lowest K points to True, rest are false
     vector<uint32_t> kNearest = arraySubset<uint32_t>(base_indices, sorted_indices);
     
     return kNearest;
 }
 
-/**
- * Argsort(currently support ascending sort)
- * @tparam T array element type
- * @param array input array
- * @return indices w.r.t sorted array
- */
-template<typename T>
-vector<uint32_t> KmeansConcaveHull::argsort(const vector<T> &array) {
-    vector<uint32_t> indices(array.size());
-    iota(indices.begin(), indices.end(), 0);
-    sort(indices.begin(), indices.end(),
-            [&array](int left, int right) -> bool {
-                // sort indices according to corresponding array element
-                return array[left] < array[right];
-            });
+// TODO: Make this dynamic searchPointIndices and return so we can use it with single input/output.
+vector<double> KmeansConcaveHull::calculateHeadings(uint32_t currentPointIndex, 
+                                                        const vector<uint32_t>& searchPointsIndicies, 
+                                                        double ref_heading)
+{
+    // Get the subset of points we are calculating heading to 
+    vector<Point> searchPoints = arraySubset(_data_set, searchPointsIndicies);
+    Point currentPoint = _data_set[currentPointIndex];
 
-    return indices;
+    vector<double> headings;
+    headings.reserve(searchPoints.size());
+    for(int i = 0; i < searchPoints.size(); i++)
+    {
+        double heading = calculateHeading(currentPoint, searchPoints[i], ref_heading);
+        headings.push_back(heading);
+    }
+
+    return headings;
 }
 
 double KmeansConcaveHull::calculateHeading(Point reference, Point target, double ref_heading)
@@ -504,29 +374,30 @@ double KmeansConcaveHull::calculateHeading(Point reference, Point target, double
     return bearing;
 }
 
-//Make this dynamic searchPointIndices and return so we can use it with single input/output
-vector<double> KmeansConcaveHull::calculateHeadings(uint32_t currentPointIndex, 
-                                                        const vector<uint32_t>& searchPointsIndicies, 
-                                                        double ref_heading)
-{
-    // Get the subset of points we are calculating heading to 
-    vector<Point> searchPoints = arraySubset(_data_set, searchPointsIndicies);
-    Point currentPoint = _data_set[currentPointIndex];
+/**
+ * Argsort(currently support ascending sort)
+ * @tparam T array element type
+ * @param array input array
+ * @return indices w.r.t sorted array
+ */
+template<typename T>
+vector<uint32_t> argsort(const vector<T> &array) {
+    vector<uint32_t> indices(array.size());
+    iota(indices.begin(), indices.end(), 0);
+    sort(indices.begin(), indices.end(),
+            [&array](int left, int right) -> bool {
+                return array[left] < array[right];
+            });
 
-    vector<double> headings;
-    headings.reserve(searchPoints.size());
-    for(int i = 0; i < searchPoints.size(); i++)
-    {
-        double heading = calculateHeading(currentPoint, searchPoints[i], ref_heading);
-        headings.push_back(heading);
-    }
-
-    return headings;
+    return indices;
 }
 
-bool containedCheck(const vector<Point>& hull, Point point)
+// Returns a range from 0 to size
+vector<uint32_t> range(size_t size)
 {
-    return true;
+    vector<uint32_t> output_array(size, 0);
+    iota(output_array.begin(), output_array.end(), 0);
+    return output_array;
 }
 
 }

@@ -23,15 +23,6 @@ using namespace std;
 namespace Clustering
 {
 
-   template<typename T>
-   void NegateArray(vector<T>& inputVector)
-   {
-        for(int i = 0; i < inputVector.size(); i++)
-        {
-            inputVector[i] = inputVector[i] * -1;
-        }
-   }
-
     class KmeansConcaveHull
     {
     public:
@@ -43,8 +34,6 @@ namespace Clustering
         KmeansConcaveHull& operator = (const KmeansConcaveHull&) = delete;
 
         vector<Point> calculate(const vector<Point>& points, size_t k);
-
-        //vector<vector<double>> KmeansConcaveHull::iterativeCalculate();
 
         // These are temporarily public whilst we perform testing
         vector<bool> get_mask()    const { return _mask; }
@@ -78,32 +67,39 @@ namespace Clustering
 
         double calculateHeading(Point reference, Point target, double ref_heading);
 
-        bool containedCheck(const vector<Point>& hull, Point point);
-
-        // TODO: refacto to NOT use recursion - it is not efficient.
         vector<Point> recurseCalculate(const vector<Point>& points, uint32_t k = 3);
 
         vector<uint32_t> getMaskedIndices(const vector<uint32_t>& input_array, 
                                                                   const vector<bool>& mask);
-
-        template<typename T>
-        vector<uint32_t> argsort(const vector<T> &array);
-
-        template<typename Type>
-        vector<Type> arraySubset(const vector<Type>& input_array, const vector<uint32_t>& indexes)
-        {
-            vector<Type> output_array;
-            output_array.reserve(indexes.size());
-            for(int i = 0; i < indexes.size(); i++)
-            {
-                output_array.push_back(input_array[indexes[i]]);
-            }
-
-            return output_array;
-        }
-
         vector<double> getLats(const vector<Point>& coords);
     };
+
+   template<typename T>
+   vector<uint32_t> argsort(const vector<T> &array);
+
+   vector<uint32_t> range(size_t size);
+
+   template<typename T>
+   void NegateArray(vector<T>& inputVector)
+   {
+        for(int i = 0; i < inputVector.size(); i++)
+        {
+            inputVector[i] = inputVector[i] * -1;
+        }
+   }
+
+    template<typename Type>
+    vector<Type> arraySubset(const vector<Type>& input_array, const vector<uint32_t>& indexes)
+    {
+        vector<Type> output_array;
+        output_array.reserve(indexes.size());
+        for(int i = 0; i < indexes.size(); i++)
+        {
+            output_array.push_back(input_array[indexes[i]]);
+        }
+
+        return output_array;
+    }
 }
 
 #endif /* KMEANS_CONCAVE_HULL_H */
