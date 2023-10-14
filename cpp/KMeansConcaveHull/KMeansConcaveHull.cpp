@@ -42,12 +42,12 @@ KmeansConcaveHull::KmeansConcaveHull(const vector<double>& lat, const vector<dou
     _data_set.reserve(lat.size());
     for(int i = 0; i < lat.size(); i++)
     {
-        _data_set.push_back(Point(lat[i], lon[i]));
+        _data_set.push_back(Point(lon[i], lat[i]));
     }
     sort(_data_set.begin(), _data_set.end(),
             [](const Point& left, const Point& right) -> bool {
                 // sort indices according to corresponding array element
-                return left.y < right.y;
+                return left.x < right.x;
             });
 }
 
@@ -184,8 +184,8 @@ bool lineIntersects(const vector<Point>& points)
 {
     for(int i = 0; i < points.size() - 1; i++)
     {
-        Point lineOneFirstPoint(points[i].y, points[i].y);
-        Point lineOneSecondPoint(points[i + 1].y, points[i + 1].y);
+        Point lineOneFirstPoint(points[i].x, points[i].y);
+        Point lineOneSecondPoint(points[i + 1].x, points[i + 1].y);
         for(int j = 0; j < points.size() - 1; j++)
         {
             if(i == j) // don't check intersection of point with itself
@@ -194,8 +194,8 @@ bool lineIntersects(const vector<Point>& points)
             }
             else
             {
-                Point lineTwoFirstPoint(points[j].y, points[j].y);
-                Point lineTwoSecondPoint(points[j + 1].y, points[j + 1].y);
+                Point lineTwoFirstPoint(points[j].x, points[j].y);
+                Point lineTwoSecondPoint(points[j + 1].x, points[j + 1].y);
                 bool intersects = lineLineIntersection(lineOneFirstPoint, lineOneSecondPoint, 
                                                             lineTwoFirstPoint, lineTwoSecondPoint);
                 if(intersects)
@@ -308,7 +308,8 @@ vector<Point> KmeansConcaveHull::calculate(const vector<Point>& _points, size_t 
 
     for (int index = 0; index < total; index++)
     {
-        if (isInside({_points[index].y, _points[index].y}, hull))
+        Point point{_points[index].x, _points[index].y};
+        if (isInside(point, hull))
         {
             count += 1;
         }
@@ -365,7 +366,7 @@ double KmeansConcaveHull::haversineDistance(const Point first, const Point secon
 
     // Get the difference between our two points then radians the difference into radians
     const double lat_delta = radians(second.y - first.y);
-    const double lon_delta = radians(second.y - first.y);
+    const double lon_delta = radians(second.x - first.x);
 
     const double converted_lat1 = radians(first.y);
     const double converted_lat2 = radians(second.y);
@@ -484,9 +485,9 @@ double KmeansConcaveHull::calculateHeading(Point reference, Point target, double
     }
     
     double referencePointLat_rads = radians(reference.y);
-    double referencePointLon_rads = radians(reference.y);
+    double referencePointLon_rads = radians(reference.x);
     double targetPointLat_rads = radians(target.y);
-    double targetPointLon_rads = radians(target.y);
+    double targetPointLon_rads = radians(target.x);
 
     double lon_dif = targetPointLon_rads - referencePointLon_rads;
 
