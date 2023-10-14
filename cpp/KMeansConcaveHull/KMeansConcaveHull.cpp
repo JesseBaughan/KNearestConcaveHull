@@ -330,8 +330,7 @@ vector<Point> KmeansConcaveHull::calculate(const vector<Point>& _points, size_t 
         return recurseCalculate(_points);
     }
 
-    vector<Point> poo(5);
-    return poo;
+    return hull;
 }
 
 int KmeansConcaveHull::getNextK()
