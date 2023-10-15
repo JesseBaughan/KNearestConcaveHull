@@ -21,11 +21,8 @@
 
 /**
  * TODO: 
- * - Write a tests so we know when we break stuff.
  * - Look for opportunties to use Modern C++
  * - Look for opportuntities to use STL 
- * - Move C++ versions of Python functions into a helper class
- * - Tidy up directory structure
  * - Run a profiler and see where primary sources of latency, compare to Python
  *   then work out what should be prioritised for optimisation.
 * */
