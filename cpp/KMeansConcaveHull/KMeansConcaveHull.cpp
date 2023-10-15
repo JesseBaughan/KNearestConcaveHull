@@ -14,7 +14,6 @@
 #include <math.h>
 #include <cmath>
 #include <algorithm>
-#include <assert.h>
 #include <bits/stdc++.h>
 
 #include "KMeansConcaveHull.hpp"
@@ -30,15 +29,8 @@
 namespace Clustering
 {
 
-static inline double radians(double degrees)
-{
-    return (degrees * M_PI)  / 180.0f;
-}
-
-static inline double degrees(double radians)
-{
-    return radians * (180.0 / M_PI);
-}
+bool lineIntersects(const vector<Point>& points);
+uint32_t NumTrueBools(const vector<bool>& boolVector);
 
 KmeansConcaveHull::KmeansConcaveHull(const vector<double>& lat, const vector<double>& lon)
     : _mask(lat.size(), true)
@@ -60,51 +52,6 @@ KmeansConcaveHull::KmeansConcaveHull(const vector<Point>& dataset)
     : _data_set(dataset)
     , _mask(dataset.size(), true)
 {
-}
-
-bool lineIntersects(const vector<Point>& points)
-{
-    for(int i = 0; i < points.size() - 1; i++)
-    {
-        Point lineOneFirstPoint(points[i].x, points[i].y);
-        Point lineOneSecondPoint(points[i + 1].x, points[i + 1].y);
-        for(int j = 0; j < points.size() - 1; j++)
-        {
-            if(i == j) // Don't check intersection of point with itself
-            {
-                continue;
-            }
-            else
-            {
-                Point lineTwoFirstPoint(points[j].x, points[j].y);
-                Point lineTwoSecondPoint(points[j + 1].x, points[j + 1].y);
-                bool intersects = lineLineIntersection(lineOneFirstPoint, lineOneSecondPoint, 
-                                                            lineTwoFirstPoint, lineTwoSecondPoint);
-                if(intersects)
-                {
-                    return true;
-                }
-            }
-        }
-    }
-
-    return false;
-}
-
-uint32_t NumTrueBools(const vector<bool>& boolVector)
-{
-    uint32_t numTrueBools = 0;
-
-    // TODO: USE STL COUNT_IF ALGORIGHTM?
-    for(const auto& value : boolVector)
-    {
-        if(value == true)
-        {
-            numTrueBools++;
-        }
-    }
-
-    return numTrueBools;
 }
 
 vector<Point> KmeansConcaveHull::calculate(size_t k)
@@ -212,62 +159,12 @@ vector<Point> KmeansConcaveHull::calculate(const vector<Point>& _points, size_t 
     return hull;
 }
 
-int KmeansConcaveHull::getNextK()
+uint32_t KmeansConcaveHull::getLowestLatitudeIndex(const vector<Point>& _points)
 {
-    if (_current_prime_index++ < _prime_k.size())
-    {
-        return _prime_k[_current_prime_index];
-    }
-    else 
-    {
-        return -1;
-    }
-}
-
-vector<Point> KmeansConcaveHull::recurseCalculate(const vector<Point>& points, uint32_t k)
-{
-    int next_k = getNextK();
-    if (next_k == -1)
-    {   
-        vector<Point> empty;
-        return empty;
-    }
-
-    Clustering::KmeansConcaveHull hullCalc(points);
-
-    return hullCalc.calculate(points, next_k);
-}
-
-double KmeansConcaveHull::haversineDistance(const Point first, const Point second)
-{
-    const double earths_radius = 6371000.0f;
-
-    // Get the difference between our two points then radians the difference into radians
-    const double lat_delta = radians(second.y - first.y);
-    const double lon_delta = radians(second.x - first.x);
-
-    const double converted_lat1 = radians(first.y);
-    const double converted_lat2 = radians(second.y);
-
-    const double a =
-        pow(sin(lat_delta / 2), 2) + cos(converted_lat1) * cos(converted_lat2) * pow(sin(lon_delta / 2), 2);
-
-    const double c = 2 * atan2(sqrt(a), sqrt(1 - a));
-    const double d = earths_radius * c;
-
-    return d;
-}
-
-vector<double> KmeansConcaveHull::calculateDistances(Point currentPoint, const vector<Point>& kNearestPoints)
-{
-    vector<double> distances;
-    distances.reserve(kNearestPoints.size());
-    for(int i = 0; i < kNearestPoints.size(); i++)
-    {
-        distances.push_back(haversineDistance(currentPoint, kNearestPoints[i]));
-    }
-
-    return distances;
+    vector<double> temp_lats = getLats(_points);
+    vector<double>::iterator it = min_element(begin(temp_lats), end(temp_lats));
+    uint32_t index = distance(begin(temp_lats), it);
+    return index;
 }
 
 vector<double> KmeansConcaveHull::getLats(const vector<Point>& coords)
@@ -280,29 +177,6 @@ vector<double> KmeansConcaveHull::getLats(const vector<Point>& coords)
     }
 
     return lats;
-}
-
-uint32_t KmeansConcaveHull::getLowestLatitudeIndex(const vector<Point>& _points)
-{
-    vector<double> temp_lats = getLats(_points);
-    vector<double>::iterator it = min_element(begin(temp_lats), end(temp_lats));
-    uint32_t index = distance(begin(temp_lats), it);
-    return index;
-}
-
-vector<uint32_t> KmeansConcaveHull::getMaskedIndices(const vector<uint32_t>& input_array, const vector<bool>& mask)
-{
-    vector<uint32_t> masked_array;
-    masked_array.reserve(input_array.size());
-    for(int i = 0; i < input_array.size(); i++)
-    {
-        if(mask[i] == true)
-        {
-            masked_array.push_back(input_array[i]);
-        }
-    }
-
-    return masked_array;
 }
 
 vector<uint32_t> KmeansConcaveHull::getKNearest(uint32_t currentPointIndex, size_t k)
@@ -327,6 +201,33 @@ vector<uint32_t> KmeansConcaveHull::getKNearest(uint32_t currentPointIndex, size
     return kNearest;
 }
 
+vector<uint32_t> KmeansConcaveHull::getMaskedIndices(const vector<uint32_t>& input_array, const vector<bool>& mask)
+{
+    vector<uint32_t> masked_array;
+    masked_array.reserve(input_array.size());
+    for(int i = 0; i < input_array.size(); i++)
+    {
+        if(mask[i] == true)
+        {
+            masked_array.push_back(input_array[i]);
+        }
+    }
+
+    return masked_array;
+}
+
+vector<double> KmeansConcaveHull::calculateDistances(Point currentPoint, const vector<Point>& kNearestPoints)
+{
+    vector<double> distances;
+    distances.reserve(kNearestPoints.size());
+    for(int i = 0; i < kNearestPoints.size(); i++)
+    {
+        distances.push_back(Clustering::haversineDistance(currentPoint, kNearestPoints[i]));
+    }
+
+    return distances;
+}
+
 // TODO: Make this dynamic searchPointIndices and return so we can use it with single input/output.
 vector<double> KmeansConcaveHull::calculateHeadings(uint32_t currentPointIndex, 
                                                         const vector<uint32_t>& searchPointsIndicies, 
@@ -340,39 +241,82 @@ vector<double> KmeansConcaveHull::calculateHeadings(uint32_t currentPointIndex,
     headings.reserve(searchPoints.size());
     for(int i = 0; i < searchPoints.size(); i++)
     {
-        double heading = calculateHeading(currentPoint, searchPoints[i], ref_heading);
+        double heading = Clustering::calculateHeading(currentPoint, searchPoints[i], ref_heading);
         headings.push_back(heading);
     }
 
     return headings;
 }
 
-double KmeansConcaveHull::calculateHeading(Point reference, Point target, double ref_heading)
+bool lineIntersects(const vector<Point>& points)
 {
-    if ((ref_heading < 0.0f) || (ref_heading >= 360.0f))
+    for(int i = 0; i < points.size() - 1; i++)
     {
-        assert(false);
+        Point lineOneFirstPoint(points[i].x, points[i].y);
+        Point lineOneSecondPoint(points[i + 1].x, points[i + 1].y);
+        for(int j = 0; j < points.size() - 1; j++)
+        {
+            if(i == j) // Don't check intersection of point with itself
+            {
+                continue;
+            }
+            else
+            {
+                Point lineTwoFirstPoint(points[j].x, points[j].y);
+                Point lineTwoSecondPoint(points[j + 1].x, points[j + 1].y);
+                bool intersects = lineLineIntersection(lineOneFirstPoint, lineOneSecondPoint, 
+                                                            lineTwoFirstPoint, lineTwoSecondPoint);
+                if(intersects)
+                {
+                    return true;
+                }
+            }
+        }
     }
-    
-    double referencePointLat_rads = radians(reference.y);
-    double referencePointLon_rads = radians(reference.x);
-    double targetPointLat_rads = radians(target.y);
-    double targetPointLon_rads = radians(target.x);
 
-    double lon_dif = targetPointLon_rads - referencePointLon_rads;
+    return false;
+}
 
-    float y = sin(lon_dif) * cos(targetPointLat_rads);
+vector<Point> KmeansConcaveHull::recurseCalculate(const vector<Point>& points, uint32_t k)
+{
+    int next_k = getNextK();
+    if (next_k == -1)
+    {   
+        vector<Point> empty;
+        return empty;
+    }
 
-    float x = cos(referencePointLat_rads) * sin(targetPointLat_rads) - sin(referencePointLat_rads) *
-            cos(targetPointLat_rads) * cos(lon_dif);
+    Clustering::KmeansConcaveHull hullCalc(points);
 
-    float bearing = fmod((degrees(atan2(y, x)) + 360.0l), 360.0l) - ref_heading;
+    return hullCalc.calculate(points, next_k);
+}
 
-    if(bearing < 0.0l)
+int KmeansConcaveHull::getNextK()
+{
+    if (_current_prime_index++ < _prime_k.size())
     {
-        bearing += 360.0l;
+        return _prime_k[_current_prime_index];
     }
-    return bearing;
+    else 
+    {
+        return -1;
+    }
+}
+
+uint32_t NumTrueBools(const vector<bool>& boolVector)
+{
+    uint32_t numTrueBools = 0;
+
+    // TODO: USE STL COUNT_IF ALGORIGHTM?
+    for(const auto& value : boolVector)
+    {
+        if(value == true)
+        {
+            numTrueBools++;
+        }
+    }
+
+    return numTrueBools;
 }
 
 }

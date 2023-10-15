@@ -10,6 +10,7 @@
 #include <limits>
 #include <vector>
 #include <cmath>
+#include <assert.h>
 
 #include "GeometryUtils.h"
 
@@ -149,6 +150,54 @@ int Is_Equal(const float val1, const float val2)
 {
    double diff =  val1 - val2;
    return (diff < std::numeric_limits<float>::epsilon() ) && (-diff < std::numeric_limits<float>::epsilon());
+}
+
+double haversineDistance(const Point first, const Point second)
+{
+    const double earths_radius = 6371000.0f;
+
+    // Get the difference between our two points then radians the difference into radians
+    const double lat_delta = radians(second.y - first.y);
+    const double lon_delta = radians(second.x - first.x);
+
+    const double converted_lat1 = radians(first.y);
+    const double converted_lat2 = radians(second.y);
+
+    const double a =
+        pow(sin(lat_delta / 2), 2) + cos(converted_lat1) * cos(converted_lat2) * pow(sin(lon_delta / 2), 2);
+
+    const double c = 2 * atan2(sqrt(a), sqrt(1 - a));
+    const double d = earths_radius * c;
+
+    return d;
+}
+
+double calculateHeading(Point reference, Point target, double ref_heading)
+{
+    if ((ref_heading < 0.0f) || (ref_heading >= 360.0f))
+    {
+        assert(false);
+    }
+    
+    double referencePointLat_rads = radians(reference.y);
+    double referencePointLon_rads = radians(reference.x);
+    double targetPointLat_rads = radians(target.y);
+    double targetPointLon_rads = radians(target.x);
+
+    double lon_dif = targetPointLon_rads - referencePointLon_rads;
+
+    float y = sin(lon_dif) * cos(targetPointLat_rads);
+
+    float x = cos(referencePointLat_rads) * sin(targetPointLat_rads) - sin(referencePointLat_rads) *
+            cos(targetPointLat_rads) * cos(lon_dif);
+
+    float bearing = fmod((degrees(atan2(y, x)) + 360.0l), 360.0l) - ref_heading;
+
+    if(bearing < 0.0l)
+    {
+        bearing += 360.0l;
+    }
+    return bearing;
 }
 
 }
