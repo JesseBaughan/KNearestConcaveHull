@@ -13,14 +13,9 @@ int main()
                                 153.04883032580403, 153.05000678267146, 153.04604902831844, 
                                 153.04581245818747, 153.04982136283908};
 
+    // Example usage
     Clustering::KmeansConcaveHull hullCalc(lat, lon);
     vector<Clustering::Point> hull = hullCalc.calculate();
-
-    // Print answer
-    for(auto point : hull)
-    {
-        std::cout << std::setprecision (18) << "{" << point.x << ", " << point.y << "}, " << std::endl;
-    }
 
     return 0;
 }
