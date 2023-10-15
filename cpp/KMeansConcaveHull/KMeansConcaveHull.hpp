@@ -14,8 +14,8 @@
 #include <vector>
 #include <array>
 
-#include "GeometryUtils.h"
-#include "ArrayUtils.h"
+#include "Utils/GeometryUtils.h"
+#include "Utils/ArrayUtils.h"
 
 using namespace std;
 
