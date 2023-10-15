@@ -1,3 +1,11 @@
+/**
+ * @file ArrayUtils.cpp
+ *
+ * @brief Arrays utility functions used by concave hull calculation.
+ * 
+ * @author Jesse B - email address
+ *
+ */
 
 #include "ArrayUtils.h"
 
@@ -15,3 +23,5 @@ vector<uint32_t> range(size_t size)
 }
 
 }
+
+/*** end of file ***/

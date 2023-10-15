@@ -1,7 +1,7 @@
 /**
- * @file GeometryUtils.h
+ * @file ArrayUtils.h
  *
- * @brief Geometry utility functions used to determine the concave hull.
+ * @brief Arrays utility functions used by concave hull calculation.
  * 
  * @author Jesse B - email address
  *
@@ -14,7 +14,6 @@
 #include <vector>
 #include <array>
 #include <numeric>
-
 
 namespace Clustering
 {
@@ -44,7 +43,7 @@ void NegateArray(std::vector<T>& inputVector)
 {
     for(int i = 0; i < inputVector.size(); i++)
     {
-        inputVector[i] = inputVector[i] * -1;
+        inputVector[i] = -inputVector[i];
     }
 }
 
