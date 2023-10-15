@@ -5,24 +5,21 @@
  *
  * @author Name - email address
  *
- * @par 
- *
  */
  
-#ifndef KMEANS_CONCAVE_HULL_H
-#define KMEANS_CONCAVE_HULL_H
+#ifndef KMEANS_CONCAVE_HULL_H_
+#define KMEANS_CONCAVE_HULL_H_
 
 #include <stdint.h>
 #include <vector>
 #include <array>
 
-#include "../Point.h"
+#include "GeometryUtils.h"
 
 using namespace std;
 
 namespace Clustering
 {
-
     class KmeansConcaveHull
     {
     public:
@@ -102,6 +99,6 @@ namespace Clustering
     }
 }
 
-#endif /* KMEANS_CONCAVE_HULL_H */
+#endif /* KMEANS_CONCAVE_HULL_H_ */
 
 /*** end of file ***/

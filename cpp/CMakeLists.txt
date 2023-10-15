@@ -7,7 +7,7 @@ set(BINARY pyKmeansConcaveHull)
 
 set(INSTALL_BIN_DIR ${PROJECT_SOURCE_DIR}/build)
 
-set(SOURCE_FILES main.cpp LineIntersect.cpp PointInPolygonCheck.cpp)
+set(SOURCE_FILES main.cpp)
 
 add_subdirectory(KMeansConcaveHull)
 add_subdirectory(test)

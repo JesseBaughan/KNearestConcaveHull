@@ -11,7 +11,6 @@
 
 #include <iostream>
 #include <stdio.h>
- 
 #include <math.h>
 #include <cmath>
 #include <algorithm>
@@ -20,8 +19,6 @@
 #include <bits/stdc++.h>
 
 #include "KMeansConcaveHull.hpp"
-#include "../LineIntersect.hpp"
-#include "../PointInPolygonCheck.h"
 
 /**
  * TODO: 

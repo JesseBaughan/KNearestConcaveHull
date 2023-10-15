@@ -1,7 +1,6 @@
 #include <iostream>
 
 #include "KMeansConcaveHull/KMeansConcaveHull.hpp" 
-#include "LineIntersect.hpp"
 
 int main()
 {
@@ -28,22 +27,6 @@ int main()
     }
 
     hullCalc.calculate(hullCalc._data_set, 3);
-
-	Point A(0, 1);
-	Point B(2, 1);
-	Point C(0, 3);
-	Point D(1, 0);
-
-    bool intersects = lineLineIntersection(A, B, C, D);
-    if(intersects)
-    {
-        cout << "Intersects";
-    }
-    else
-    {
-
-        cout << "Does not intersect";
-    }
 
     return 0;
 }
