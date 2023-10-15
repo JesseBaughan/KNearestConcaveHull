@@ -5,6 +5,7 @@ project(pyKmeansConcaveHull)
 set(SOURCE_FILES
     KMeansConcaveHull.cpp
     GeometryUtils.cpp
+    ArrayUtils.cpp
 )
 
 add_library(KMeansConcaveHull SHARED STATIC ${SOURCE_FILES})

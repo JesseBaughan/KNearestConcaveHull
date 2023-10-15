@@ -14,7 +14,6 @@
 #include <math.h>
 #include <cmath>
 #include <algorithm>
-#include <numeric>
 #include <assert.h>
 #include <bits/stdc++.h>
 
@@ -377,32 +376,6 @@ double KmeansConcaveHull::calculateHeading(Point reference, Point target, double
         bearing += 360.0l;
     }
     return bearing;
-}
-
-/**
- * Argsort(currently support ascending sort)
- * @tparam T array element type
- * @param array input array
- * @return indices w.r.t sorted array
- */
-template<typename T>
-vector<uint32_t> argsort(const vector<T> &array) {
-    vector<uint32_t> indices(array.size());
-    iota(indices.begin(), indices.end(), 0);
-    sort(indices.begin(), indices.end(),
-            [&array](int left, int right) -> bool {
-                return array[left] < array[right];
-            });
-
-    return indices;
-}
-
-// Returns a range from 0 to size
-vector<uint32_t> range(size_t size)
-{
-    vector<uint32_t> output_array(size, 0);
-    iota(output_array.begin(), output_array.end(), 0);
-    return output_array;
 }
 
 }

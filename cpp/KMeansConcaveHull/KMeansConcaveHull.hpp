@@ -15,6 +15,7 @@
 #include <array>
 
 #include "GeometryUtils.h"
+#include "ArrayUtils.h"
 
 using namespace std;
 
@@ -74,33 +75,6 @@ private:
                                                                 const vector<bool>& mask);
     vector<double> getLats(const vector<Point>& coords);
 };
-
-template<typename T>
-vector<uint32_t> argsort(const vector<T> &array);
-
-vector<uint32_t> range(size_t size);
-
-template<typename T>
-void NegateArray(vector<T>& inputVector)
-{
-    for(int i = 0; i < inputVector.size(); i++)
-    {
-        inputVector[i] = inputVector[i] * -1;
-    }
-}
-
-template<typename Type>
-vector<Type> arraySubset(const vector<Type>& input_array, const vector<uint32_t>& indexes)
-{
-    vector<Type> output_array;
-    output_array.reserve(indexes.size());
-    for(int i = 0; i < indexes.size(); i++)
-    {
-        output_array.push_back(input_array[indexes[i]]);
-    }
-
-    return output_array;
-}
 
 }
 
