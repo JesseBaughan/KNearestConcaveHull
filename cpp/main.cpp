@@ -1,6 +1,3 @@
-#include <iostream>
-#include <iomanip>
-
 #include "KMeansConcaveHull/KMeansConcaveHull.hpp" 
 
 int main()
