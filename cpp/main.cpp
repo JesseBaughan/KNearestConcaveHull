@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iomanip>
 
 #include "KMeansConcaveHull/KMeansConcaveHull.hpp" 
 
@@ -14,6 +15,12 @@ int main()
 
     Clustering::KmeansConcaveHull hullCalc(lat, lon);
     vector<Clustering::Point> hull = hullCalc.calculate();
+
+    // Print answer
+    for(auto point : hull)
+    {
+        std::cout << std::setprecision (18) << "{" << point.x << ", " << point.y << "}, " << std::endl;
+    }
 
     return 0;
 }
