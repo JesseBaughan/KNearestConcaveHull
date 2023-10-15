@@ -52,6 +52,8 @@ KmeansConcaveHull::KmeansConcaveHull(const vector<double>& lat, const vector<dou
     {
         _data_set.push_back(Point(lon[i], lat[i]));
     }
+
+    // Sort dataset by Longitude (x value).
     sort(_data_set.begin(), _data_set.end(),
             [](const Point& left, const Point& right) -> bool {
                 return left.x < right.x;
@@ -107,6 +109,11 @@ uint32_t NumTrueBools(const vector<bool>& boolVector)
     }
 
     return numTrueBools;
+}
+
+vector<Point> KmeansConcaveHull::calculate(size_t k)
+{
+    return calculate(_data_set, k);
 }
 
 vector<Point> KmeansConcaveHull::calculate(const vector<Point>& _points, size_t k)

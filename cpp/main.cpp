@@ -13,20 +13,7 @@ int main()
                                 153.04581245818747, 153.04982136283908};
 
     Clustering::KmeansConcaveHull hullCalc(lat, lon);
-
-    uint32_t index = hullCalc.getLowestLatitudeIndex(hullCalc._data_set);
-
-    vector<uint32_t> knn = hullCalc.getKNearest(index);
-
-    vector<double> headings = hullCalc.calculateHeadings(index, knn, 270.0l);
-    Clustering::NegateArray<double>(headings);
-
-    for(const auto& heading : headings)
-    {
-        cout << "Value: " << heading << endl;
-    }
-
-    hullCalc.calculate(hullCalc._data_set, 3);
+    vector<Clustering::Point> hull = hullCalc.calculate();
 
     return 0;
 }

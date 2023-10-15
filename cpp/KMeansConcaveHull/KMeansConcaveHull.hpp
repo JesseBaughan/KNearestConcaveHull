@@ -27,22 +27,11 @@ namespace Clustering
         explicit KmeansConcaveHull(const vector<Point>& dataset);
         ~KmeansConcaveHull() {};
 
+        // Delete copy and copy assignment constructors.
         KmeansConcaveHull(const KmeansConcaveHull&) = delete;
         KmeansConcaveHull& operator = (const KmeansConcaveHull&) = delete;
 
-        vector<Point> calculate(const vector<Point>& points, size_t k);
-
-        // These are temporarily public whilst we perform testing
-        vector<bool> get_mask()    const { return _mask; }
-        uint32_t getLowestLatitudeIndex(const vector<Point>& points);
-        vector<uint32_t> getKNearest(uint32_t currentPointIndex, size_t k = 3);
-
-        vector<double> calculateHeadings(uint32_t currentPointIndex, 
-                                             const vector<uint32_t>& searchPoints, 
-                                             double ref_heading=0.0l);
-
-        // Public for development purposes
-        vector<Point> _data_set;
+        vector<Point> calculate(size_t k = 3);
 
     private:
         const array<int, 18> _prime_k = {3,  7, 13, 19, 29, 37,
@@ -50,10 +39,24 @@ namespace Clustering
                                          97, 101, 107, 113, 131, 139};
         size_t _current_prime_index{0};
 
+        vector<Point> _data_set;
+
         vector<bool> _mask;
 
         uint32_t _prime_ix{0};
         size_t _k{3};
+
+        vector<Point> calculate(const vector<Point>& points, size_t k);
+
+        vector<bool> get_mask()    const { return _mask; }
+
+        uint32_t getLowestLatitudeIndex(const vector<Point>& points);
+
+        vector<uint32_t> getKNearest(uint32_t currentPointIndex, size_t k = 3);
+
+        vector<double> calculateHeadings(uint32_t currentPointIndex, 
+                                             const vector<uint32_t>& searchPoints, 
+                                             double ref_heading=0.0l);
 
         vector<double> calculateDistances(Point currentPoint, 
                                               const vector<Point>& kNearestPoints);
