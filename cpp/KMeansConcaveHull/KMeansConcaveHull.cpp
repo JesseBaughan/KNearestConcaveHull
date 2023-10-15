@@ -18,14 +18,6 @@
 
 #include "KMeansConcaveHull.hpp"
 
-/**
- * TODO: 
- * - Look for opportunties to use Modern C++
- * - Look for opportuntities to use STL 
- * - Run a profiler and see where primary sources of latency, compare to Python
- *   then work out what should be prioritised for optimisation.
-* */
-
 namespace Clustering
 {
 
