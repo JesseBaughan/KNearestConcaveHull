@@ -22,10 +22,7 @@ namespace Clustering
 
 int Is_Left(const Point &p0, const Point &p1, const Point &point);
 
-int Is_Intersecting(const Point &p1, const Point& p2);
-
-template<typename T>
-int Is_Equal(const T val1, const T val2);
+int Is_PointEqual(const Point &p1, const Point& p2);
 
 bool lineLineIntersection(Point A, Point B, Point C, Point D)
 {
@@ -96,8 +93,8 @@ bool isInside(const Point &point, const std::vector<Point> &points_list)
 
         // We consider a point that is the same as a vertice of the polygon 
         // as inside the polygon.
-        bool p1Intersecting = Is_Intersecting(point, point1);
-        bool p2Intersecting = Is_Intersecting(point, point2);
+        bool p1Intersecting = Is_PointEqual(point, point1);
+        bool p2Intersecting = Is_PointEqual(point, point2);
         if(p1Intersecting || p2Intersecting)
         {
             return true;
@@ -135,18 +132,23 @@ int Is_Left(const Point &p0, const Point &p1, const Point &point)
             (point.x - p0.x) * (p1.y - p0.y));
 }
 
-int Is_Intersecting(const Point &p1, const Point& p2)
+int Is_PointEqual(const Point &p1, const Point& p2)
 {
     bool xIntersects = Is_Equal(p1.x, p2.x);
     bool yIntersects = Is_Equal(p1.y, p2.y);
     return xIntersects || yIntersects;
 }
 
-template<typename T>
-int Is_Equal(const T val1, const T val2)
+int Is_Equal(const double val1, const double val2)
 {
    double diff =  val1 - val2;
-   return (diff < std::numeric_limits<T>::epsilon() ) && (-diff < std::numeric_limits<T>::epsilon());
+   return (diff < std::numeric_limits<double>::epsilon() ) && (-diff < std::numeric_limits<double>::epsilon());
+}
+
+int Is_Equal(const float val1, const float val2)
+{
+   double diff =  val1 - val2;
+   return (diff < std::numeric_limits<float>::epsilon() ) && (-diff < std::numeric_limits<float>::epsilon());
 }
 
 }
