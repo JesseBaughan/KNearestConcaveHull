@@ -14,7 +14,7 @@
 #include <algorithm>
 #include <bits/stdc++.h>
 
-#include "KMeansConcaveHull.hpp"
+#include "KMeansConcaveHull.h"
 
 namespace Clustering
 {
@@ -70,7 +70,7 @@ vector<Point> KmeansConcaveHull::calculate(const vector<Point>& _points, size_t 
     _mask[first_point] = false;
 
     double prev_angle = 270.0l; // TODO: explain this magic number?
-    static constexpr uint32_t step = 2; // TODO: why is step = 2?
+    uint32_t step = 2; 
     uint32_t stop = step + k_check;
     
     while ((((current_point != first_point) || (step == 2)) && NumTrueBools(_mask)) > 0)
@@ -313,3 +313,5 @@ uint32_t NumTrueBools(const vector<bool>& boolVector)
 }
 
 }
+
+/*** end of file ***/

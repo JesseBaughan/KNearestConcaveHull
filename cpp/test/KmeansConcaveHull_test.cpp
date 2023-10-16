@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "../KMeansConcaveHull/KMeansConcaveHull.hpp"
+#include "../KMeansConcaveHull/KMeansConcaveHull.h"
 
 
 TEST(testCluster1, test1) 
