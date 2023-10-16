@@ -3,8 +3,7 @@
  *
  * @brief Arrays utility functions used by concave hull calculation.
  * 
- * @author Jesse B - email address
- *
+ * @author Jesse B 
  */
 
 #ifndef ARRAY_UTILS_H_

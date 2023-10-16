@@ -3,8 +3,7 @@
  *
  * @brief Geometry utility functions used to determine the concave hull.
  * 
- * @author Jesse B - email address
- *
+ * @author Jesse B 
  */
 
 #include <limits>

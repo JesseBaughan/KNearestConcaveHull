@@ -1,12 +1,10 @@
 /**
  * @file KMeansConcaveHull.cpp
  *
- * @brief A description of the module’s purpose.
+ * @brief Attempts to find the concave hull of a set of 
+ * lat/lon coordinates. 
  *
- * @author Name - email address
- *
- * @par 
- *
+ * @author Jesse B 
  */
 
 #include <iostream>
@@ -27,6 +25,7 @@ uint32_t NumTrueBools(const vector<bool>& boolVector);
 KmeansConcaveHull::KmeansConcaveHull(const vector<double>& lat, const vector<double>& lon)
     : _mask(lat.size(), true)
 {
+    // TODO: Can we combine creation of the data set with sorting?
     _data_set.reserve(lat.size());
     for(int i = 0; i < lat.size(); i++)
     {
@@ -70,8 +69,8 @@ vector<Point> KmeansConcaveHull::calculate(const vector<Point>& _points, size_t 
 
     _mask[first_point] = false;
 
-    double prev_angle = 270.0l;
-    uint32_t step = 2;
+    double prev_angle = 270.0l; // TODO: explain this magic number?
+    static constexpr uint32_t step = 2; // TODO: why is step = 2?
     uint32_t stop = step + k_check;
     
     while ((((current_point != first_point) || (step == 2)) && NumTrueBools(_mask)) > 0)
@@ -86,6 +85,8 @@ vector<Point> KmeansConcaveHull::calculate(const vector<Point>& _points, size_t 
         vector<double> angles = calculateHeadings(current_point, knn, prev_angle);
 
         //TODO: why do we negate the array here?
+        // We could just negate as we are calucating the headings so don't 
+        // need to iterate over array twice?
         NegateArray<double>(angles);
         vector<uint32_t> candidates = argsort<double>(angles);
 

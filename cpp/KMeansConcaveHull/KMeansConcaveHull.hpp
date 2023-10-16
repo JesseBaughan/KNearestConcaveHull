@@ -1,12 +1,12 @@
 /**
- * @file KMeansConcaveHull.hpp
+ * @file KMeansConcaveHull.h
  *
- * @brief A description of the module’s purpose.
+ * @brief Attempts to find the concave hull of a set of 
+ * lat/lon coordinates. 
  *
- * @author Name - email address
- *
+ * @author Jesse B 
  */
- 
+
 #ifndef KMEANS_CONCAVE_HULL_H_
 #define KMEANS_CONCAVE_HULL_H_
 
@@ -29,10 +29,6 @@ public:
     explicit KmeansConcaveHull(const vector<Point>& dataset);
     ~KmeansConcaveHull() = default;
 
-    // Delete copy and copy assignment constructors.
-    KmeansConcaveHull(const KmeansConcaveHull&) = delete;
-    KmeansConcaveHull& operator = (const KmeansConcaveHull&) = delete;
-
     vector<Point> calculate(size_t k = 3);
 
 private:
@@ -50,7 +46,7 @@ private:
 
     vector<Point> calculate(const vector<Point>& points, size_t k);
 
-    vector<bool> get_mask()    const { return _mask; }
+    vector<bool> getMask()    const { return _mask; }
 
     uint32_t getLowestLatitudeIndex(const vector<Point>& points);
 
