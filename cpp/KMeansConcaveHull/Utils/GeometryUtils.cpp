@@ -49,11 +49,11 @@ bool lineLineIntersection(Point A, Point B, Point C, Point D)
     {
         double x = (b2 * c1 - b1 * c2) / determinant;
         double y = (a1 * c2 - a2 * c1) / determinant;
-        return (PointLiesOnLine(Point(x, y), A, B) && PointLiesOnLine(Point(x, y), C, D));
+        return (pointLiesOnLine(Point(x, y), A, B) && pointLiesOnLine(Point(x, y), C, D));
     }
 }
 
-bool PointLiesOnLine(Point intersectPoint, Point A, Point B)
+bool pointLiesOnLine(Point intersectPoint, Point A, Point B)
 {
     bool xPointOnLine = (intersectPoint.x > fmin(A.x, B.x)) && 
                         (intersectPoint.x < fmax(A.x, B.x));
@@ -135,18 +135,18 @@ int Is_Left(const Point &p0, const Point &p1, const Point &point)
 
 int Is_PointEqual(const Point &p1, const Point& p2)
 {
-    bool xIntersects = Is_Equal(p1.x, p2.x);
-    bool yIntersects = Is_Equal(p1.y, p2.y);
+    bool xIntersects = isEqual(p1.x, p2.x);
+    bool yIntersects = isEqual(p1.y, p2.y);
     return xIntersects || yIntersects;
 }
 
-int Is_Equal(const double val1, const double val2)
+int isEqual(const double val1, const double val2)
 {
    double diff =  val1 - val2;
    return (diff < std::numeric_limits<double>::epsilon() ) && (-diff < std::numeric_limits<double>::epsilon());
 }
 
-int Is_Equal(const float val1, const float val2)
+int isEqual(const float val1, const float val2)
 {
    double diff =  val1 - val2;
    return (diff < std::numeric_limits<float>::epsilon() ) && (-diff < std::numeric_limits<float>::epsilon());

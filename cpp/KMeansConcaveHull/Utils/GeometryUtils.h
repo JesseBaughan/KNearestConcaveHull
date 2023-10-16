@@ -51,10 +51,9 @@ bool lineLineIntersection(Point A, Point B, Point C, Point D);
 
 bool isInside(const Point &point, const std::vector<Point> &points_list);
 
-bool PointLiesOnLine(Point intersectPoint, Point A, Point B);
+bool pointLiesOnLine(Point intersectPoint, Point A, Point B);
 
-int Is_Equal(const double val1, const double val2);
-int Is_Equal(const float val1, const float val2);
+int isEqual(const double val1, const double val2);
 
 double haversineDistance(Point first, Point second);
 
