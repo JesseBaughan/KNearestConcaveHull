@@ -2,7 +2,7 @@
 #include "../KMeansConcaveHull/KMeansConcaveHull.h"
 
 
-TEST(testCluster1, test1) 
+TEST(testCubeCluster, test1) 
 {
     vector<double> lat = {-27.4507974, -27.451273651267112, -27.45169316203486, 
                                 -27.451034639346872, -27.452475086130043, -27.452644945552006, 
@@ -13,7 +13,7 @@ TEST(testCluster1, test1)
                                 153.04581245818747, 153.04982136283908};
 
     Clustering::KmeansConcaveHull hullCalc(lat, lon);
-    vector<Clustering::Point> hull = hullCalc.calculate();
+    vector<Clustering::Point> hull = hullCalc.calculate(3);
 
     vector<Clustering::Point> answer = {{153.046049028318436, -27.4526449455520059}, 
                                         {153.05000678267146, -27.4524750861300433}, 
@@ -33,3 +33,36 @@ TEST(testCluster1, test1)
         ASSERT_DOUBLE_EQ(hull[i].y, answer[i].y);
     }
 }
+
+TEST(testStarCluster, test2) 
+{
+    vector<double> lat = {-29.3693, -29.4052, -29.4046, -29.43989, -29.48712, 
+                          -29.45364, -29.49429, -29.44109, -29.41956, -29.407};
+
+    vector<double> lon = {149.83226, 149.86041, 149.92839, 149.87963, 149.90435, 
+                          149.83912, 149.78831, 149.79518, 149.73818, 149.81097};
+
+    Clustering::KmeansConcaveHull hullCalc{lat, lon};
+    vector<Clustering::Point> hull = hullCalc.calculate();
+
+    vector<Clustering::Point> answer = {{149.78831, -29.49429},
+                                        {149.90435, -29.48712},
+                                        {149.92839, -29.4046 },
+                                        {149.83226, -29.3693 },
+                                        {149.73818, -29.41956},
+                                        {149.79518, -29.44109},
+                                        {149.83912, -29.45364},
+                                        {149.87963, -29.43989},
+                                        {149.78831, -29.49429},
+                                        {149.78831, -29.49429}};
+
+    EXPECT_TRUE(hull.size() == answer.size());
+
+    for(int i = 0; i < answer.size(); i++)
+    {
+        ASSERT_DOUBLE_EQ(hull[i].x, answer[i].x);
+        ASSERT_DOUBLE_EQ(hull[i].y, answer[i].y);
+    }
+}
+
+ 

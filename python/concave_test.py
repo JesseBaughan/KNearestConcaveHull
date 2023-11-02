@@ -63,6 +63,7 @@ def main():
     #        [0.5, 0.25], [0.5, 0.75], [0.25, 0.5], [0.75, 0.5]]
 
     # Create a test cluster
+    """
     points_2d = [[153.0476219         ,-27.4507974],
                  [153.04687382688317  ,-27.451273651267112], 
                  [153.0476602627239   ,-27.45169316203486], 
@@ -71,6 +72,19 @@ def main():
                  [153.04604902831844  ,-27.452644945552006], 
                  [153.04581245818747  ,-27.450159439942457], 
                  [153.04982136283908  ,-27.44996617171483]]
+    """
+    
+    # Star
+    points_2d = [[149.83226, -29.3693],
+                 [149.86041, -29.4052], 
+                 [149.92839, -29.4046], 
+                 [149.87963, -29.43989],
+                 [149.90435, -29.48712], 
+                 [149.83912, -29.45364], 
+                 [149.78831, -29.49429], 
+                 [149.79518, -29.44109],
+                 [149.73818, -29.41956],
+                 [149.81097, -29.407]]
 
     points_2d = np.array(points_2d)
     #points_2d = np.array(list(zip(*points_2d)))
@@ -85,17 +99,19 @@ def main():
     for i in range(n_samples):
         #points_2d = np.array(generate_random_cluster())
 
-        boundary = tds_concave_hull.calculate(points_2d)
+        boundary = tds_concave_hull.calculate(points_2d, 3)
 
         if boundary is None:
             #print("Failed")
             failed_counter += 1
         else:
-            #shape_plot = plt.Polygon(boundary, fill = False, hatch='/')
+            shape_plot = plt.Polygon(boundary, fill = False, hatch='/')
             shape = TDSConcaveHull.boundary_points_to_shape(boundary)
             #plot_result(points_2d, shape_plot)
+            plot_2d_points(boundary)
 
     print("FAILS: ", failed_counter)
+    print(boundary)
 
     profiler.disable()
     stats = pstats.Stats(profiler).sort_stats('cumtime')
